@@ -1,4 +1,4 @@
-package com.item_backend.exeception;
+package com.item_backend.exception;
 
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
