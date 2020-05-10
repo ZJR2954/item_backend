@@ -1,4 +1,4 @@
-package com.item_backend.model.entity;
+package com.item_backend.model.pojo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.Api;

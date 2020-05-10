@@ -1,7 +1,7 @@
 package com.item_backend.exeception;
 
-import com.item_backend.model.entity.Result;
-import com.item_backend.model.entity.StatusCode;
+import com.item_backend.model.pojo.Result;
+import com.item_backend.model.pojo.StatusCode;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

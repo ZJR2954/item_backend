@@ -1,4 +1,4 @@
-package com.item_backend.model.entity;
+package com.item_backend.model.pojo;
 
 /**
  * 自定义状态码

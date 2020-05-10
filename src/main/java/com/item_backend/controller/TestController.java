@@ -1,14 +1,13 @@
 package com.item_backend.controller;
 
-import com.item_backend.model.entity.Result;
-import com.item_backend.model.entity.StatusCode;
-import com.item_backend.model.pojo.TestUser;
+import com.item_backend.model.pojo.Result;
+import com.item_backend.model.pojo.StatusCode;
+import com.item_backend.model.entity.TestUser;
 import com.item_backend.service.impl.TestUserServiceImpl;
 import com.item_backend.utils.FormatUtil;
 import com.item_backend.utils.LoggerUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @Description:
+ * @Description: 测试接口
  * @Author: Mt.Li
  * @Create: 2020-05-10 15:32
  */
@@ -42,6 +41,7 @@ public class TestController {
         logger.info("登录测试开始");
         try{
             if (!formatUtil.checkStringNull(user.getName(),user.getPassword())){
+                // 判断是否为空也可以前端处理
                 logger.info("对象为空");
                 return Result.create(StatusCode.ERROR,"参数错误");
             }else if (testUserService.searchUser(user)){

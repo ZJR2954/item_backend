@@ -1,10 +1,10 @@
 package com.item_backend.service;
 
-import com.item_backend.model.pojo.TestUser;
+import com.item_backend.model.entity.TestUser;
 import org.springframework.stereotype.Service;
 
 /**
- * @Description:
+ * @Description: 测试服务接口
  * @Author: Mt.Li
  * @Create: 2020-05-10 15:37
  */
