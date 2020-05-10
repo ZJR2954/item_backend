@@ -7,6 +7,8 @@ import com.item_backend.service.impl.TestUserServiceImpl;
 import com.item_backend.utils.FormatUtil;
 import com.item_backend.utils.LoggerUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +36,7 @@ public class TestController {
 
     private Logger logger = LoggerUtil.loggerFactory(this.getClass());
 
+    @ApiOperation(value = "登录案例测试",notes = "用户登录测试Result",httpMethod = "POST")
     @PostMapping("/login")
     public Result loginTest(TestUser user){
         logger.info("登录测试开始");

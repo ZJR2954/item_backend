@@ -4,7 +4,10 @@ package com.item_backend.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * @Description: jwt相关配置
+ * @Author: Mt.Li
+*/
 @ConfigurationProperties(prefix = "jwt")
 @Component
 public class JwtConfig {
