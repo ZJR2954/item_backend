@@ -27,7 +27,7 @@ jwt:
 
 mybatis:
   ### 数据库模型对象
-  type-aliases-package: com.item_backend.model.pojo
+  type-aliases-package: com.item_backend.model.entity
   mapper-locations: mapper/*.xml
 
 logging:
