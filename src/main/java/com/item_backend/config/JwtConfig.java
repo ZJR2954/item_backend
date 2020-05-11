@@ -48,4 +48,8 @@ public class JwtConfig {
     public void setHeader(String header) {
         this.header = header;
     }
+
+    public static void main(String[] args) {
+
+    }
 }

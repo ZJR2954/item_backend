@@ -1,6 +1,7 @@
 package com.item_backend.utils;
 
 import com.item_backend.config.JwtConfig;
+import com.item_backend.model.entity.TestUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,6 +14,7 @@ import java.util.*;
 
 @Component
 public class JwtTokenUtil implements Serializable {
+
 
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
@@ -67,6 +69,19 @@ public class JwtTokenUtil implements Serializable {
     }
 
     /**
+     * token是否过期
+     * true 过期 false 未过期
+     *
+     * @param token
+     * @return
+     */
+    public Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        boolean isExpired = expiration.before(new Date());
+        return isExpired;
+    }
+
+    /**
      * 从token中获取过期时间
      *
      * @param token
@@ -83,6 +98,10 @@ public class JwtTokenUtil implements Serializable {
         return expiration;
     }
 
+    /**
+     * @Description: 解密获取用户信息
+     * @Author: Mt.Li
+    */
     private Claims getClaimsFromToken(String token) {
         Claims claims;
         try {
@@ -106,18 +125,7 @@ public class JwtTokenUtil implements Serializable {
         return new Date(System.currentTimeMillis() + jwtConfig.getTime() * 1000);
     }
 
-    /**
-     * token是否过期
-     * true 过期 false 未过期
-     *
-     * @param token
-     * @return
-     */
-    public Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        boolean isExpired = expiration.before(new Date());
-        return isExpired;
-    }
+
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
@@ -125,27 +133,20 @@ public class JwtTokenUtil implements Serializable {
 
 
     /**
-     * 根据提供的用户详细信息生成token,需要security配合提供加密算法，本项目暂时未采用
-     * 可采用自加密算法
+     * 根据提供的用户详细信息生成token
      *
-     * @param userDetails
+     * @param user
      * @return
      */
-//    public String generateToken(UserDetails userDetails) {
-//        Map<String, Object> claims = new HashMap<>(3);
-//        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername()); // 放入用户名
-//        claims.put(CLAIM_KEY_CREATED, new Date()); // 放入token生成时间
-//        List<String> roles = new ArrayList<>();
-//        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-//        for (GrantedAuthority authority : authorities) { // SimpleGrantedAuthority是GrantedAuthority实现类
-//            // GrantedAuthority包含类型为String的获取权限的getAuthority()方法
-//            // 提取角色并放入List中
-//            roles.add(authority.getAuthority());
-//        }
-//        claims.put(CLAIM_KEY_ROLES, roles); // 放入用户权限
-//
-//        return generateToken(claims);
-//    }
+    public String generateToken(TestUser user) {
+        Map<String, Object> claims = new HashMap<>(3);
+        claims.put(CLAIM_KEY_USERNAME, user.getName()); // 放入用户名
+        claims.put(CLAIM_KEY_CREATED, new Date()); // 放入token生成时间
+        List<String> roles = new ArrayList<>();
+        claims.put(CLAIM_KEY_ROLES, roles); // 放入用户权限
+
+        return generateToken(claims);
+    }
 
     /**
      * 生成token（JWT令牌）
@@ -161,10 +162,18 @@ public class JwtTokenUtil implements Serializable {
                 .compact();
     }
 
+    /**
+     * @Description: 判断是否要刷新token
+     * @Author: Mt.Li
+    */
     public Boolean canTokenBeRefreshed(String token) {
         return !isTokenExpired(token);
     }
 
+    /**
+     * @Description: 刷新token，代表当前用户活跃，重新赋予30分钟
+     * @Author: Mt.Li
+    */
     public String refreshToken(String token) {
         String refreshedToken;
         try {
@@ -181,16 +190,16 @@ public class JwtTokenUtil implements Serializable {
      * 校验token
      *
      * @param token
-     * @param userDetails
+     * @param user
      * @return
      */
-//    public Boolean validateToken(String token, UserDetails userDetails) {
-//        final String username = getUsernameFromToken(token);  //从token中取出用户名
-//        return (username.equals(userDetails.getUsername())
-//                &&
-//                !isTokenExpired(token) //校验是否过期
-//        );
-//    }
+    public Boolean validateToken(String token, TestUser user) {
+        final String username = getUsernameFromToken(token);  //从token中取出用户名
+        return (username.equals(user.getName())
+                &&
+                !isTokenExpired(token) //校验是否过期
+        );
+    }
 
     /**
      * 从token中获取用户角色
