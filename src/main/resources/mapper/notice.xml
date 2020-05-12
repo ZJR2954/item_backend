@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace= "com.item_backend.dao.NoticeDao" >
+
+    <resultMap id ="NoticeDto" type="com.item_backend.model.entity.Notice">
+        <result column="id" property="id"/>
+        <result column="sex" property="sex"/>
+        <result column="username" property="username"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+    <select id = "findNotice" resultMap="NoticeDto">
+        select * from stu
+    </select>
+</mapper>
