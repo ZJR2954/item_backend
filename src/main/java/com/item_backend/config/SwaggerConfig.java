@@ -33,7 +33,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("接口总览")
-                .description("测试")
+                .description("v1.0接口文档")
                 .version("1.0")
                 .build();
     }
