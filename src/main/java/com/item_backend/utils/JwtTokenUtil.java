@@ -1,7 +1,8 @@
 package com.item_backend.utils;
 
 import com.item_backend.config.JwtConfig;
-import com.item_backend.model.entity.TestUser;
+import com.item_backend.model.dto.UserDto;
+import com.item_backend.model.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -135,15 +136,14 @@ public class JwtTokenUtil implements Serializable {
     /**
      * 根据提供的用户详细信息生成token
      *
-     * @param user
+     * @param userDto
      * @return
      */
-    public String generateToken(TestUser user) {
+    public String generateToken(UserDto userDto) {
         Map<String, Object> claims = new HashMap<>(3);
-        claims.put(CLAIM_KEY_USERNAME, user.getName()); // 放入用户名
+        claims.put(CLAIM_KEY_USERNAME, userDto.getUser().getJob_number()); // 放入用户名
         claims.put(CLAIM_KEY_CREATED, new Date()); // 放入token生成时间
-        List<String> roles = new ArrayList<>();
-        claims.put(CLAIM_KEY_ROLES, roles); // 放入用户权限
+        claims.put(CLAIM_KEY_ROLES, userDto.getUserType().getU_type_name()); // 放入用户类型名
 
         return generateToken(claims);
     }
@@ -193,7 +193,7 @@ public class JwtTokenUtil implements Serializable {
      * @param user
      * @return
      */
-    public Boolean validateToken(String token, TestUser user) {
+    public Boolean validateToken(String token, User user) {
         final String username = getUsernameFromToken(token);  //从token中取出用户名
         return (username.equals(user.getName())
                 &&
