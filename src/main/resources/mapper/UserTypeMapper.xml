@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.item_backend.mapper.UserTypeMapper">
+
+    <resultMap id="UserType" type="UserType">
+        <id property="u_type" column="u_type"/>
+        <result property="u_type_name" column="u_type_name"/>
+        <result property="u_power" column="u_power"/>
+    </resultMap>
+
+    <select id="searchUserTypeByUType" parameterType="Integer" resultMap="UserType">
+        SELECT u_type, u_type_name, u_power from user_type
+        WHERE u_type = #{u_type}
+    </select>
+
+</mapper>

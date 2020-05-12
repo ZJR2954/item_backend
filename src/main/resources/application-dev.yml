@@ -13,6 +13,18 @@ spring:
       validation-query: SELECT 1 # 验证连接
       validation-query-timeout: 2000
 
+  ###Redis
+  redis:
+    host: xxxxxx
+    port: 6379
+    timeout: 2000ms
+    password: xxxxxx
+    jedis:
+      pool:
+        max-active: 10
+        max-idle: 8
+        min-idle: 2
+        max-wait: 1000ms
 
 ### jwt
 jwt:
