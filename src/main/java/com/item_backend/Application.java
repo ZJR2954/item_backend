@@ -10,6 +10,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication(scanBasePackages = {"com.item_backend"})
 public class Application {
 /*demo*/
+    //testGit bbb
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
