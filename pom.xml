@@ -88,6 +88,12 @@
             <version>1.8.13</version>
         </dependency>
 
+        <!-- redis 操作依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -104,6 +110,14 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.9</version>
         </dependency>
+
+        <!--UEditor配置工具-->
+        <dependency>
+            <groupId>com.gitee.qdbp.thirdparty</groupId>
+            <artifactId>ueditor</artifactId>
+            <version>1.4.3.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
