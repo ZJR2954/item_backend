@@ -1,5 +1,6 @@
 package com.item_backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
@@ -42,7 +43,12 @@ public class UserController {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
         try {
-            Map map = userServiceImpl.login(user);
+            Map map = null;
+            try {
+                map = userServiceImpl.login(user);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             if (map.containsKey("msg")){
                 return Result.create(StatusCode.LOGINERROR, map.get("msg").toString());
             }
