@@ -17,12 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * @Description:
-<<<<<<< HEAD
- * @Author: Mt.Li
-=======
+ * @Description: 用户控制层
  * @Author: Mt.Li & xiao
->>>>>>> Xiao
  * @Create: 2020-05-12 11:15
  */
 @Api(tags = "User_api", description = "User_api", basePath = "/user")
