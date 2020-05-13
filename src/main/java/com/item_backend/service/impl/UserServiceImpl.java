@@ -1,6 +1,9 @@
 package com.item_backend.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.item_backend.config.JwtConfig;
+import com.item_backend.config.RedisConfig;
 import com.item_backend.mapper.UserMapper;
 import com.item_backend.mapper.UserTypeMapper;
 import com.item_backend.model.dto.UserDto;
@@ -11,6 +14,7 @@ import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +34,10 @@ public class UserServiceImpl implements UserService {
     UserTypeMapper userTypeMapper;
 
     @Autowired
+    private ObjectMapper objectMapper;
+
+
+    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
@@ -43,8 +51,9 @@ public class UserServiceImpl implements UserService {
      * @param user
      * @return map
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Map login(User user) {
+    public Map login(User user) throws JsonProcessingException {
         Map<String, Object> map = new HashMap<>();
         // 判断是否存在用户
         User user1 = searchUserByLoginMsg(user);
@@ -80,6 +89,10 @@ public class UserServiceImpl implements UserService {
 
         map.put("token", jwtConfig.getPrefix() + token);
         map.put("userMsg", userDto);
+
+        // 向redis中存储个人信息
+        redisTemplate.opsForValue().
+                set(RedisConfig.REDIS_USER_MESSAGE + user1.getU_id(), objectMapper.writeValueAsString(userDto), jwtConfig.getTime(), TimeUnit.SECONDS);
 
         // 向redis中存储token（设置过期时间30min）
         redisTemplate.opsForValue().
