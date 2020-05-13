@@ -14,4 +14,7 @@ public interface UserService {
     // 根据登录信息查询用户
     User searchUserByLoginMsg(User user);
 
+    // 获取个人信息
+    Map searchProfile();
+
 }

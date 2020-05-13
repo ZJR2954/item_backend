@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @Description:
- * @Author: Mt.Li
+ * @Author: Mt.Li & xiao
  * @Create: 2020-05-12 11:16
  */
 @Service
@@ -96,4 +96,26 @@ public class UserServiceImpl implements UserService {
     public User searchUserByLoginMsg(User user) {
         return userMapper.searchUserBySchoolAndJobNumber(user);
     }
+
+    /**
+     * 获取个人信息
+     * @param
+     * @return Map
+     */
+    @Override
+    public Map searchProfile() {
+        Map<String, Object> map = new HashMap<>();
+        // 判断用户是否已登录
+        if(!redisTemplate.hasKey(JwtConfig.REDIS_TOKEN_KEY_PREFIX + "1")){
+            map.put("msg","请登录后获取个人信息");
+            return map;
+        }
+        UserDto userDto = new UserDto();
+//        UserType userType = userTypeMapper.searchUserTypeByUType(user1.getU_type());
+//        userDto.setUser(user1);
+//        userDto.setUserType(userType);
+        return null;
+    }
+
+
 }
