@@ -12,19 +12,14 @@ import com.item_backend.model.entity.User;
 import com.item_backend.model.entity.UserType;
 import com.item_backend.service.UserService;
 import com.item_backend.utils.JwtTokenUtil;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-<<<<<<< HEAD
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-=======
 import java.util.HashMap;
 import java.util.Map;
->>>>>>> Xiao
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -137,13 +132,14 @@ public class UserServiceImpl implements UserService {
             return false;
         }
     }
-=======
+
+    /**
      * 获取个人信息
      *
      * @param
      * @return Map
      * @Author xiao
-     */
+    */
     @Override
     public Map getProfile(String token) {
         Integer u_id = jwtTokenUtil.getUIDFromToken(token.substring(jwtConfig.getPrefix().length()));
@@ -215,6 +211,4 @@ public class UserServiceImpl implements UserService {
         userMapper.changePassword(u_id, newPassword);
         return map;
     }
-
->>>>>>> Xiao
 }
