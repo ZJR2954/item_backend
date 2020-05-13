@@ -146,7 +146,9 @@ public class JwtTokenUtil implements Serializable {
      */
     public String generateToken(UserDto userDto) {
         Map<String, Object> claims = new HashMap<>(3);
+
         claims.put(CLAIM_KEY_UID, userDto.getUser().getU_id()); // 放入用户名
+
         claims.put(CLAIM_KEY_CREATED, new Date()); // 放入token生成时间
         claims.put(CLAIM_KEY_ROLES, userDto.getUserType().getU_type_name()); // 放入用户类型名
 
@@ -199,9 +201,10 @@ public class JwtTokenUtil implements Serializable {
      * @return
      */
     public Boolean validateToken(String token, User user) {
+
         final Integer uId = getUIDFromToken(token);  //从token中取出用户名
         return ((uId == user.getU_id())
-                &&
+
                 !isTokenExpired(token) //校验是否过期
         );
     }
