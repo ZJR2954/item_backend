@@ -15,4 +15,7 @@ public interface UserService {
     // 根据登录信息查询用户
     User searchUserByLoginMsg(User user);
 
+    // 用户登出
+    boolean logout();
+
 }

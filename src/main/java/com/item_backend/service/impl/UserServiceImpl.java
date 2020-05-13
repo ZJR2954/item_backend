@@ -11,11 +11,13 @@ import com.item_backend.model.entity.User;
 import com.item_backend.model.entity.UserType;
 import com.item_backend.service.UserService;
 import com.item_backend.utils.JwtTokenUtil;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserTypeMapper userTypeMapper;
+
+    @Autowired
+    HttpServletRequest request;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -108,5 +113,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User searchUserByLoginMsg(User user) {
         return userMapper.searchUserBySchoolAndJobNumber(user);
+    }
+
+    /**
+     * 退出登录
+     * 删除redis中的key
+     */
+    public boolean logout() {
+        try{
+            Integer uId = jwtTokenUtil.getUIDFromRequest(request);
+            redisTemplate.delete(JwtConfig.REDIS_TOKEN_KEY_PREFIX + uId);
+            return true;
+        }catch (NullPointerException e){
+            return false;
+        }
     }
 }

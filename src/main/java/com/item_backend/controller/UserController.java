@@ -9,6 +9,7 @@ import com.item_backend.utils.FormatUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,5 +57,18 @@ public class UserController {
         } catch (RuntimeException re) {
             return Result.create(StatusCode.LOGINERROR, re.getMessage());
         }
+    }
+
+    /**
+     * 用户登出
+     * @return Result：状态码+msg
+     */
+    @ApiOperation(value = "用户登出",notes = "Result：状态码+msg;删除redis中的key", httpMethod = "GET")
+    @GetMapping("/logout")
+    public Result logout() {
+        if(userServiceImpl.logout()) {
+            return Result.create(StatusCode.OK, "退出成功");
+        }
+        return Result.create(StatusCode.ERROR, "退出失败");
     }
 }
