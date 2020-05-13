@@ -64,10 +64,16 @@ public class TestController {
     }
 
     @ApiOperation(value = "测试从token中获取用户id",notes = "token不带前缀",httpMethod = "GET")
-    @GetMapping("/test_get_token/{token}")
-    public Result operateToken(@ApiParam("token")@PathVariable("token") String token){
+    @GetMapping("/test_get_u_id/{token}")
+    public Result getTokenUID(@ApiParam("token")@PathVariable("token") String token){
         Integer uId = jwtTokenUtil.getUIDFromToken(token);
         return Result.create(StatusCode.OK,"获取ID成功",uId);
     }
 
+    @ApiOperation(value = "测试从token中获取用户类型名",notes = "token不带前缀bearer",httpMethod = "GET")
+    @GetMapping("/test_get_u_type_name/{token}")
+    public Result getTokenUTypeName(@ApiParam("token")@PathVariable("token") String token){
+        String uTypename = jwtTokenUtil.getRolesFromToken(token);
+        return Result.create(StatusCode.OK,"获取用户类型名成功",uTypename);
+    }
 }

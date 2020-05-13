@@ -212,11 +212,11 @@ public class JwtTokenUtil implements Serializable {
      * @param authToken
      * @return
      */
-    public List<String> getRolesFromToken(String authToken) {
-        List<String> roles;
+    public String getRolesFromToken(String authToken) {
+        String roles;
         try {
             final Claims claims = getClaimsFromToken(authToken);
-            roles = (List<String>)claims.get(CLAIM_KEY_ROLES);
+            roles = (String)claims.get(CLAIM_KEY_ROLES);
         } catch (Exception e) {
             roles = null;
         }
