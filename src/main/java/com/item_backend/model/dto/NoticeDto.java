@@ -1,7 +1,6 @@
 package com.item_backend.model.dto;
 
 import com.item_backend.model.entity.Notice;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
