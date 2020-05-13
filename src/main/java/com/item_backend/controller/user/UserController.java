@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -33,10 +34,11 @@ public class UserController {
 
     /**
      * 用户登录
+     *
      * @param user
      * @return Result：状态码+msg+(data)
      */
-    @ApiOperation(value = "用户登录",notes = "Result：状态码+msg+(data)", httpMethod = "POST")
+    @ApiOperation(value = "用户登录", notes = "Result：状态码+msg+(data)", httpMethod = "POST")
     @PostMapping("/login")
     public Result login(User user) {
         if (!formatUtil.checkStringNull(user.getJob_number(), user.getPassword())) {
@@ -49,7 +51,7 @@ public class UserController {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            if (map.containsKey("msg")){
+            if (map.containsKey("msg")) {
                 return Result.create(StatusCode.LOGINERROR, map.get("msg").toString());
             }
             return Result.create(StatusCode.OK, "登录成功", map);
@@ -58,17 +60,45 @@ public class UserController {
         }
     }
 
-    //获取个人信息
     @PostMapping("/profile")
-    public Result profile() {
+    public Result profile(HttpServletRequest request) {
+        String token = request.getHeader("token");
         try {
-            Map map = userServiceImpl.searchProfile();
+            Map map = userServiceImpl.getProfile(token);
             if (map.get("msg") != null) {
-                return Result.create(StatusCode.LOGINERROR, map.get("msg").toString());
+                return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
             }
             return Result.create(StatusCode.OK, "获取个人信息成功", map);
         } catch (RuntimeException re) {
-            return Result.create(StatusCode.LOGINERROR, re.getMessage());
+            return Result.create(StatusCode.ERROR, re.getMessage());
+        }
+    }
+
+    @PostMapping("/update_user_detail")
+    public Result updateUserDetail(HttpServletRequest request, User user) {
+        String token = request.getHeader("token");
+        try {
+            Map map = userServiceImpl.updateUserDetail(token, user);
+            if (map.get("msg") != null) {
+                return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
+            }
+            return Result.create(StatusCode.OK, "修改个人信息成功", map);
+        } catch (Exception re) {
+            return Result.create(StatusCode.ERROR, re.getMessage());
+        }
+    }
+
+    @PostMapping("/change_password")
+    public Result changePassword(HttpServletRequest request, String oldPassword, String newPassword) {
+        String token = request.getHeader("token");
+        try {
+            Map map = userServiceImpl.changePassword(token, oldPassword, newPassword);
+            if (map.get("msg") != null) {
+                return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
+            }
+            return Result.create(StatusCode.OK, "修改登录密码成功", map);
+        } catch (Exception re) {
+            return Result.create(StatusCode.ERROR, re.getMessage());
         }
     }
 

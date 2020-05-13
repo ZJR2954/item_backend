@@ -52,7 +52,7 @@ public class JwtTokenUtil implements Serializable {
             // key为“sub”
             String str = claims.getSubject();
 
-            if(claims.getSubject()!=null){
+            if (claims.getSubject() != null) {
                 uId = Integer.valueOf(str);
             }
 
@@ -67,7 +67,7 @@ public class JwtTokenUtil implements Serializable {
         Date created;
         try {
             final Claims claims = getClaimsFromToken(token);
-            created = new Date((Long)claims.get(CLAIM_KEY_CREATED));
+            created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
         } catch (Exception e) {
             created = null;
         }
@@ -107,7 +107,7 @@ public class JwtTokenUtil implements Serializable {
     /**
      * @Description: 解密获取用户信息
      * @Author: Mt.Li
-    */
+     */
     private Claims getClaimsFromToken(String token) {
         Claims claims;
         try {
@@ -130,7 +130,6 @@ public class JwtTokenUtil implements Serializable {
         // 当前毫秒级时间 + yml中的time * 1000
         return new Date(System.currentTimeMillis() + jwtConfig.getTime() * 1000);
     }
-
 
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
@@ -170,7 +169,7 @@ public class JwtTokenUtil implements Serializable {
     /**
      * @Description: 判断是否要刷新token
      * @Author: Mt.Li
-    */
+     */
     public Boolean canTokenBeRefreshed(String token) {
         return !isTokenExpired(token);
     }
@@ -178,7 +177,7 @@ public class JwtTokenUtil implements Serializable {
     /**
      * @Description: 刷新token，代表当前用户活跃，重新赋予30分钟
      * @Author: Mt.Li
-    */
+     */
     public String refreshToken(String token) {
         String refreshedToken;
         try {
@@ -216,7 +215,7 @@ public class JwtTokenUtil implements Serializable {
         String roles;
         try {
             final Claims claims = getClaimsFromToken(authToken);
-            roles = (String)claims.get(CLAIM_KEY_ROLES);
+            roles = (String) claims.get(CLAIM_KEY_ROLES);
         } catch (Exception e) {
             roles = null;
         }

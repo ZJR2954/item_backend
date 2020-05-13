@@ -16,6 +16,12 @@ public interface UserService {
     User searchUserByLoginMsg(User user);
 
     // 获取个人信息
-    Map searchProfile();
+    Map getProfile(String token);
+
+    // 修改个人信息
+    Map updateUserDetail(String token, User user) throws JsonProcessingException;
+
+    // 修改登录密码
+    Map changePassword(String token, String oldPassword, String newPassword);
 
 }
