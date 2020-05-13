@@ -28,7 +28,7 @@ public class UEditorUploadUtil {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String time = "" + dateFormat.format(new Date());
         //UEditor的config.json规定的返回路径格式
-        String returnPath = "/image/ueditor/" + time + "/" + fileName;
+        String returnPath = "/api/image/ueditor/" + time + "/" + fileName;
         //保存路径
         String saveDir = path + "static/image/ueditor/" + time + "/";
         File saveDirFile = new File(saveDir);
