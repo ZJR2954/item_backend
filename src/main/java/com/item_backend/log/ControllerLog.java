@@ -48,6 +48,7 @@ public class ControllerLog {
 
         StringBuilder builder = new StringBuilder();
         builder.append("{URL:[").append(request.getRequestURI()).append("],")
+                .append("IP:[").append(request.getRemoteAddr()).append("],")
                 .append("RequestMethod:[").append(request.getMethod()).append("],")
                 .append("Args:").append(Arrays.toString(pjp.getArgs())).append(",")
                 .append("ReturnValue:[").append(obj == null ? "null" : obj.toString()).append("],")
