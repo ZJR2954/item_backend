@@ -1,10 +1,13 @@
 package com.item_backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
 import com.item_backend.service.impl.UserServiceImpl;
 import com.item_backend.utils.FormatUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import java.util.Map;
  * @Author: Mt.Li
  * @Create: 2020-05-12 11:15
  */
+@Api(tags = "User_api", description = "User_api", basePath = "/user")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -27,14 +31,25 @@ public class UserController {
     @Autowired
     FormatUtil formatUtil;
 
+    /**
+     * 用户登录
+     * @param user
+     * @return Result：状态码+msg+(data)
+     */
+    @ApiOperation(value = "用户登录",notes = "Result：状态码+msg+(data)", httpMethod = "POST")
     @PostMapping("/login")
     public Result login(User user) {
         if (!formatUtil.checkStringNull(user.getJob_number(), user.getPassword())) {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
         try {
-            Map map = userServiceImpl.login(user);
-            if (map.get("msg")!= null){
+            Map map = null;
+            try {
+                map = userServiceImpl.login(user);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            if (map.containsKey("msg")){
                 return Result.create(StatusCode.LOGINERROR, map.get("msg").toString());
             }
             return Result.create(StatusCode.OK, "登录成功", map);
