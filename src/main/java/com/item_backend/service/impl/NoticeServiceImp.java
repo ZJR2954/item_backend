@@ -7,7 +7,6 @@ import com.item_backend.model.dto.NoticeDto;
 import com.item_backend.model.entity.Notice;
 import com.item_backend.model.entity.NoticeQueryInfo;
 import com.item_backend.service.NoticeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,6 +37,7 @@ public class NoticeServiceImp implements NoticeService {
 
         ArrayList<Notice> notices= (ArrayList<Notice>) noticeMapper.findAllNotice();
 
+        /*消息按时间排序，最近的消息放在最前边*/
         Collections.sort(notices, new Comparator<Notice>() {
             @Override
             public int compare(Notice o1, Notice o2) {
