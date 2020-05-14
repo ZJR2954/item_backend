@@ -1,6 +1,8 @@
 spring:
   datasource:
+
     url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+
     username: root  # 加密（生产环境使用），需要配置解密
     password: txc123
     driverClassName: com.mysql.cj.jdbc.Driver # mysql 8.x要加“cj”
