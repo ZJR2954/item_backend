@@ -199,7 +199,6 @@ public class JwtTokenUtil implements Serializable {
      */
     public Boolean validateToken(String token, User user) {
         final Integer uId = getUIDFromToken(token);  //从token中取出用户名
-
         return ((uId == user.getU_id())
                 &&
                 !isTokenExpired(token) //校验是否过期
