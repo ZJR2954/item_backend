@@ -119,7 +119,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-<<<<<<< HEAD
      * 退出登录
      * 删除redis中的key
      */
