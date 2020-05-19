@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.item_backend.mapper.FacultyMapper">
+
+    <resultMap id="Faculty" type="Faculty">
+        <id property="faculty_id" column="faculty_id"/>
+        <result property="faculty_name" column="faculty_name"/>
+        <result property="school" column="school"/>
+        <result property="u_id" column="u_id"/>
+    </resultMap>
+
+    <select id="searchFacultyByUId" parameterType="Integer" resultMap="Faculty">
+        SELECT *
+        from faculty
+        WHERE u_id = #{u_id}
+    </select>
+
+</mapper>

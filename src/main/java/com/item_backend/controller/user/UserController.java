@@ -9,9 +9,7 @@ import com.item_backend.utils.FormatUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -40,7 +38,7 @@ public class UserController {
      */
     @ApiOperation(value = "用户登录", notes = "Result：状态码+msg+(data)", httpMethod = "POST")
     @PostMapping("/login")
-    public Result login(User user) {
+    public Result login(@RequestBody User user) {
         if (!formatUtil.checkStringNull(user.getJob_number(), user.getPassword())) {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
@@ -60,7 +58,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/profile")
+    @ApiOperation(value = "个人信息", notes = "Result：状态码+msg+(data)", httpMethod = "GET")
+    @GetMapping("/profile")
     public Result profile(HttpServletRequest request) {
         String token = request.getHeader("token");
         try {
@@ -74,8 +73,9 @@ public class UserController {
         }
     }
 
-    @PostMapping("/update_user_detail")
-    public Result updateUserDetail(HttpServletRequest request, User user) {
+    @ApiOperation(value = "修改个人信息", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
+    @PutMapping("/update")
+    public Result updateUserDetail(HttpServletRequest request, @RequestBody User user) {
         String token = request.getHeader("token");
         try {
             Map map = userServiceImpl.updateUserDetail(token, user);
@@ -88,11 +88,12 @@ public class UserController {
         }
     }
 
-    @PostMapping("/change_password")
-    public Result changePassword(HttpServletRequest request, String oldPassword, String newPassword) {
+    @ApiOperation(value = "修改登录密码", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
+    @PutMapping("/change_password")
+    public Result changePassword(HttpServletRequest request, @RequestBody Map reqMap) {
         String token = request.getHeader("token");
         try {
-            Map map = userServiceImpl.changePassword(token, oldPassword, newPassword);
+            Map map = userServiceImpl.changePassword(token, reqMap.get("oldPassword").toString(), reqMap.get("newPassword").toString());
             if (map.get("msg") != null) {
                 return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
             }
