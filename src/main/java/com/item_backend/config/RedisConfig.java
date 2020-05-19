@@ -18,4 +18,9 @@ public class RedisConfig {
 
     public static final String REDIS_QUESTION = "QUESTION_";
 
+    public static final String REDIS_FACULTY = "FACULTY_";
+
+    public static final String REDIS_MAJOR = "MAJOR_";
+    
+
 }
