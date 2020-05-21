@@ -63,7 +63,7 @@ public class MajorController {
      */
     @ApiOperation(value = "添加专业", notes = "Result：状态码+msg+(data)", httpMethod = "POST")
     @PostMapping("/add_major/{faculty_id}")
-    public Result addMajor(HttpServletRequest request, @PathVariable("faculty_id") Integer faculty_id, @RequestBody Major major) throws JsonProcessingException {
+    public Result addMajor(@PathVariable("faculty_id") Integer faculty_id, @RequestBody Major major) throws JsonProcessingException {
         // 判断权限
         if (!jwtTokenUtil.checkUserType(request, "院级管理员")) {
             return Result.create(StatusCode.ACCESSERROR, "无权限");
@@ -86,7 +86,7 @@ public class MajorController {
      */
     @ApiOperation(value = "删除专业", notes = "Result：状态码+msg+(data)", httpMethod = "DELETE")
     @DeleteMapping("/delete_major/{faculty_id}/{major_id}")
-    public Result deleteMajor(HttpServletRequest request, @PathVariable("faculty_id") Integer faculty_id, @PathVariable("major_id") Integer major_id) throws JsonProcessingException {
+    public Result deleteMajor(@PathVariable("faculty_id") Integer faculty_id, @PathVariable("major_id") Integer major_id) throws JsonProcessingException {
         // 判断权限
         if (!jwtTokenUtil.checkUserType(request, "院级管理员")) {
             return Result.create(StatusCode.ACCESSERROR, "无权限");
