@@ -59,6 +59,6 @@ public class ControllerLog {
         logger.info(builder.toString());
         return obj;
     }
-    
+
 }
 
