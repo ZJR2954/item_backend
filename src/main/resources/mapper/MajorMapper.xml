@@ -11,7 +11,7 @@
         <result property="faculty_id" column="faculty_id"/>
     </resultMap>
 
-    <insert id="saveMajor" parameterType="Major">
+    <insert id="addMajor" parameterType="Major">
         INSERT INTO major(major_id, major_name, faculty_id)
         VALUES(#{major_id}, #{major_name}, #{faculty_id})
     </insert>

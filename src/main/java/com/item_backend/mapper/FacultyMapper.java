@@ -14,6 +14,9 @@ import java.util.List;
 @Repository
 public interface FacultyMapper {
 
+    //根据院系id查询院系
+    Faculty searchFacultyByFacultyId(Integer faculty_id);
+
     //根据院级管理员id查询院系
     List<Faculty> searchFacultyByUId(Integer u_id);
 
@@ -22,4 +25,5 @@ public interface FacultyMapper {
 
     // 根据院级管理员id查询学院id
     Integer searchFacultyIdByAdminId(Integer id);
+
 }

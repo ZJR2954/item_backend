@@ -12,6 +12,12 @@
         <result property="u_id" column="u_id"/>
     </resultMap>
 
+    <select id="searchFacultyByFacultyId" parameterType="Integer" resultType="Faculty">
+        SELECT *
+        from faculty
+        WHERE faculty_id = #{faculty_id}
+    </select>
+
     <select id="searchFacultyByUId" parameterType="Integer" resultMap="Faculty">
         SELECT *
         from faculty
