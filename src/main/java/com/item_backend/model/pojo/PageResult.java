@@ -14,11 +14,10 @@ import java.util.List;
 @ToString
 public class PageResult<T> {
 
-    private Long total; // 数据总数
-    private List<T> rows; // 数据
+    private Integer total; //数据条数
+    private List<T> rows; //数据
 
-    public PageResult(Long total, List<T> rows) {
-        // 调用父类无参构造方法,无类型即Object
+    public PageResult(Integer total, List<T> rows) {
         super();
         this.total = total;
         this.rows = rows;
