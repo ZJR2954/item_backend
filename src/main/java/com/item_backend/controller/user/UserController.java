@@ -92,7 +92,7 @@ public class UserController {
     @ApiOperation(value = "个人信息", notes = "Result：状态码+msg+(data)", httpMethod = "GET")
     @GetMapping("/profile")
     public Result profile(HttpServletRequest request) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         try {
             Map map = userService.getProfile(token);
             if (map.get("msg") != null) {
@@ -107,7 +107,7 @@ public class UserController {
     @ApiOperation(value = "修改个人信息", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
     @PutMapping("/update")
     public Result updateUserDetail(HttpServletRequest request, @RequestBody User user) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         try {
             Map map = userService.updateUserDetail(token, user);
             if (map.get("msg") != null) {
@@ -122,7 +122,7 @@ public class UserController {
     @ApiOperation(value = "修改登录密码", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
     @PutMapping("/change_password")
     public Result changePassword(HttpServletRequest request, @RequestBody Map reqMap) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         try {
             Map map = userService.changePassword(token, reqMap.get("oldPassword").toString(), reqMap.get("newPassword").toString());
             if (map.get("msg") != null) {
