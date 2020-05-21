@@ -15,6 +15,9 @@ public interface UserService {
     // 根据登录信息查询用户
     User searchUserByLoginMsg(User user);
 
+    // 用户登出
+    boolean logout();
+
     // 获取个人信息
     Map getProfile(String token);
 
@@ -23,5 +26,4 @@ public interface UserService {
 
     // 修改登录密码
     Map changePassword(String token, String oldPassword, String newPassword);
-
 }

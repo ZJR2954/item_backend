@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.item_backend.config.JwtConfig;
 import com.item_backend.config.RedisConfig;
+import com.item_backend.mapper.FacultyMapper;
+import com.item_backend.mapper.SchoolMapper;
 import com.item_backend.mapper.UserMapper;
 import com.item_backend.mapper.UserTypeMapper;
 import com.item_backend.model.dto.UserDto;
@@ -14,9 +16,11 @@ import com.item_backend.service.UserService;
 import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +38,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserTypeMapper userTypeMapper;
+
+    @Autowired
+    SchoolMapper schoolMapper;
+
+    @Autowired
+    FacultyMapper facultyMapper;
+
+    @Autowired
+    HttpServletRequest request;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -82,10 +95,15 @@ public class UserServiceImpl implements UserService {
             map.put("msg", "请选择正确的用户类型");
             return map;
         }
+        // 封装用户信息
         UserDto userDto = new UserDto();
         UserType userType = userTypeMapper.searchUserTypeByUType(user1.getU_type());
+        Integer schoolId = schoolMapper.searchSchoolIdBySchoolName(user1.getU_school());
+        Integer facultyId = facultyMapper.searchFacultyIdByFacultyName(user1.getU_faculty(),user1.getU_school());
         userDto.setUser(user1);
         userDto.setUserType(userType);
+        userDto.setSchool_id(schoolId);
+        userDto.setFaculty_id(facultyId);
 
         // 根据用户详细信息生成token
         final String token = jwtTokenUtil.generateToken(userDto);
@@ -115,12 +133,26 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 退出登录
+     * 删除redis中的key
+     */
+    public boolean logout() {
+        try{
+            Integer uId = jwtTokenUtil.getUIDFromRequest(request);
+            redisTemplate.delete(JwtConfig.REDIS_TOKEN_KEY_PREFIX + uId);
+            return true;
+        }catch (NullPointerException e){
+            return false;
+        }
+    }
+
+    /**
      * 获取个人信息
      *
      * @param
      * @return Map
      * @Author xiao
-     */
+    */
     @Override
     public Map getProfile(String token) {
         Integer u_id = jwtTokenUtil.getUIDFromToken(token.substring(jwtConfig.getPrefix().length()));
@@ -200,5 +232,6 @@ public class UserServiceImpl implements UserService {
         }
         return map;
     }
+
 
 }

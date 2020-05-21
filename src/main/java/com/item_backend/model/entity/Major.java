@@ -25,5 +25,4 @@ public class Major implements Serializable {
 
     @ApiModelProperty(value = "所属院系id", dataType = "Integer")
     private Integer faculty_id;//所属院系id
-
 }

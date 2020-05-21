@@ -18,4 +18,16 @@
         WHERE u_id = #{u_id}
     </select>
 
+    <select id="searchFacultyIdByFacultyName" resultType="Integer">
+        SELECT faculty_id
+        from faculty
+        WHERE faculty_name = #{facultyName} AND school = #{schoolName}
+    </select>
+
+    <select id="searchFacultyIdByAdminId" parameterType="Integer" resultType="Integer">
+        SELECT faculty_id
+        from faculty
+        WHERE u_id = #{id}
+    </select>
+
 </mapper>

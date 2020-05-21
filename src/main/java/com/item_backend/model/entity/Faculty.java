@@ -1,12 +1,15 @@
 package com.item_backend.model.entity;
 
 import io.swagger.annotations.ApiModelProperty;
+
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
 
 /**
+ * <<<<<<< HEAD
+ *
  * @Author xiao
  * @Time 2020/5/19
  * @Description 院系
