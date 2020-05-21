@@ -85,7 +85,7 @@ public class SubjectController {
             return Result.create(StatusCode.OK, "查询结果为空");
         }
         // 将结果封装到分页结果类
-        PageResult<SubjectDto> pageResult = new PageResult<>(count, subjectDto);
+        PageResult<SubjectDto> pageResult = new PageResult(count, subjectDto);
         return Result.create(StatusCode.OK, "查询成功", pageResult);
     }
 
