@@ -66,12 +66,6 @@ public class SubjectServiceImpl implements SubjectService {
      */
     @Override
     public Integer getSubjectCount(Integer facultyId) {
-        if(facultyId == 0){
-            Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-            UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-            Integer faculty = userDto.getFaculty_id();
-            return subjectMapper.getSubjectCount(faculty);
-        }
         return subjectMapper.getSubjectCount(facultyId);
     }
 
@@ -84,10 +78,7 @@ public class SubjectServiceImpl implements SubjectService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<SubjectDto> SearchSubjectList(Integer page, Integer showCount) throws JsonProcessingException {
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-        UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-        Integer facultyId = userDto.getFaculty_id();
+    public List<SubjectDto> SearchSubjectList(Integer facultyId, Integer page, Integer showCount) throws JsonProcessingException {
         // 先查询缓存中是否存在
         if(!redisTemplate.hasKey(RedisConfig.REDIS_SUBJECT + facultyId)){
             // 缓存中不存在，先查询所有的学科信息放入redis中
@@ -100,7 +91,6 @@ public class SubjectServiceImpl implements SubjectService {
         subjectDtos = subjectDtos.size() < (page-1)*showCount+showCount
                 ? subjectDtos.subList((page-1)*showCount,subjectDtos.size()) : subjectDtos.subList((page-1)*showCount,(page-1)*showCount+showCount);
         return subjectDtos;
-
     }
 
     /**
@@ -110,13 +100,10 @@ public class SubjectServiceImpl implements SubjectService {
      */
     @Override
     @Transactional(rollbackFor=Exception.class)
-    public Boolean addSubject(Subject subject) throws JsonProcessingException {
+    public Boolean addSubject(Integer facultyId, Subject subject) throws JsonProcessingException {
         if(!subjectMapper.addSubject(subject)){
             return false;
         }
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-        UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-        Integer facultyId = userDto.getFaculty_id();
         updateSubjectInRedis(facultyId);
         return true;
     }
@@ -128,13 +115,10 @@ public class SubjectServiceImpl implements SubjectService {
      */
     @Override
     @Transactional(rollbackFor=Exception.class)
-    public Boolean deleteSubjectById(Integer id) throws JsonProcessingException {
+    public Boolean deleteSubjectById(Integer facultyId, Integer id) throws JsonProcessingException {
         if(!subjectMapper.deleteSubjectById(id)){
             return false;
         }
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-        UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-        Integer facultyId = userDto.getFaculty_id();
         updateSubjectInRedis(facultyId);
         return true;
     }

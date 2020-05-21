@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public interface ChapterService {
 
     // 添加章节
-    Boolean addChapter(Chapter chapter) throws JsonProcessingException;
+    Boolean addChapter(Integer facultyId, Chapter chapter) throws JsonProcessingException;
 
     // 删除章节
-    Boolean deleteChapter(Integer chapterId) throws JsonProcessingException;
+    Boolean deleteChapter(Integer facultyId, Integer chapterId) throws JsonProcessingException;
 }

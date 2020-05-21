@@ -18,13 +18,13 @@ public interface SubjectService {
     Integer getSubjectCount(Integer facultyId);
 
     // 查询学科列表
-    List<SubjectDto> SearchSubjectList(Integer page, Integer showCount) throws JsonProcessingException;
+    List<SubjectDto> SearchSubjectList(Integer facultyId, Integer page, Integer showCount) throws JsonProcessingException;
 
     // 添加学科
-    Boolean addSubject(Subject subject) throws JsonProcessingException;
+    Boolean addSubject(Integer facultyId, Subject subject) throws JsonProcessingException;
 
     // 根据学科id删除学科
-    Boolean deleteSubjectById(Integer subjectId) throws JsonProcessingException;
+    Boolean deleteSubjectById(Integer facultyId, Integer subjectId) throws JsonProcessingException;
 
     // 更新redis中Subject信息
     void updateSubjectInRedis(Integer facultyId) throws JsonProcessingException;
