@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public interface QuestionTypeService {
 
     // 添加题型
-    Boolean addQuestionType(QuestionType questionType) throws JsonProcessingException;
+    Boolean addQuestionType(Integer facultyId, QuestionType questionType) throws JsonProcessingException;
 
     // 删除题型
-    Boolean deleteQuestionType(Integer questionTypeId) throws JsonProcessingException;
+    Boolean deleteQuestionType(Integer facultyId, Integer questionTypeId) throws JsonProcessingException;
 }

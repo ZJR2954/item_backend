@@ -45,13 +45,10 @@ public class ChapterServiceImpl implements ChapterService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean addChapter(Chapter chapter) throws JsonProcessingException {
+    public Boolean addChapter(Integer facultyId, Chapter chapter) throws JsonProcessingException {
         if(!chapterMapper.addChapter(chapter)){
             return false;
         }
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-        UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-        Integer facultyId = userDto.getFaculty_id();
         subjectService.updateSubjectInRedis(facultyId);
         return true;
     }
@@ -63,13 +60,10 @@ public class ChapterServiceImpl implements ChapterService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteChapter(Integer chapterId) throws JsonProcessingException {
+    public Boolean deleteChapter(Integer facultyId, Integer chapterId) throws JsonProcessingException {
         if(!chapterMapper.deleteChapter(chapterId)){
             return false;
         }
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-        UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-        Integer facultyId = userDto.getFaculty_id();
         subjectService.updateSubjectInRedis(facultyId);
         return true;
     }

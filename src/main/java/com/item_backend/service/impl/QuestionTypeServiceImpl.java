@@ -48,13 +48,10 @@ public class QuestionTypeServiceImpl implements QuestionTypeService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean addQuestionType(QuestionType questionType) throws JsonProcessingException {
+    public Boolean addQuestionType(Integer facultyId, QuestionType questionType) throws JsonProcessingException {
         if(!questionTypeMapper.addQuestionType(questionType)){
             return false;
         }
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-        UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-        Integer facultyId = userDto.getFaculty_id();
         subjectService.updateSubjectInRedis(facultyId);
         return true;
     }
@@ -66,13 +63,10 @@ public class QuestionTypeServiceImpl implements QuestionTypeService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteQuestionType(Integer questionTypeId) throws JsonProcessingException {
+    public Boolean deleteQuestionType(Integer facultyId, Integer questionTypeId) throws JsonProcessingException {
         if(!questionTypeMapper.deleteQuestionType(questionTypeId)){
             return false;
         }
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-        UserDto userDto = JSON.parseObject(redisTemplate.opsForValue().get(RedisConfig.REDIS_USER_MESSAGE + uId), UserDto.class);
-        Integer facultyId = userDto.getFaculty_id();
         subjectService.updateSubjectInRedis(facultyId);
         return true;
     }

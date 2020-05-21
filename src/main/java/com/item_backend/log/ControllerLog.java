@@ -26,7 +26,7 @@ public class ControllerLog {
     /**
      * 拦截控制层的所有public方法
      */
-    @Pointcut("execution(public * com.item_backend.controller.*.*(..))")
+    @Pointcut("execution(public * com.item_backend.controller..*.*(..))")
     public void log() {
     }
 
@@ -45,7 +45,6 @@ public class ControllerLog {
         // 执行方法
         Object obj = pjp.proceed();
         long end = System.currentTimeMillis();
-
 
         StringBuilder builder = new StringBuilder();
         builder.append("{URL:[").append(request.getRequestURI()).append("],")
