@@ -3,7 +3,6 @@ package com.item_backend.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.item_backend.config.JwtConfig;
 import com.item_backend.config.RedisConfig;
 import com.item_backend.mapper.FacultyMapper;
 import com.item_backend.mapper.MajorMapper;
@@ -11,13 +10,14 @@ import com.item_backend.model.dto.MajorDto;
 import com.item_backend.model.entity.Faculty;
 import com.item_backend.model.entity.Major;
 import com.item_backend.service.MajorService;
-import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @Author xiao
@@ -38,12 +38,6 @@ public class MajorServiceImpl implements MajorService {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    private JwtConfig jwtConfig;
 
     /**
      * 根据院系id查询专业列表
@@ -109,9 +103,6 @@ public class MajorServiceImpl implements MajorService {
      */
     @Override
     public void updateMajorInRedis(Integer faculty_id) throws JsonProcessingException {
-        if (redisTemplate.hasKey(RedisConfig.REDIS_MAJOR + faculty_id)) {
-            redisTemplate.delete(RedisConfig.REDIS_MAJOR + faculty_id);
-        }
         List<Major> majorList = majorMapper.searchMajorByFacultyId(faculty_id);
         if (majorList.size() <= 0) return;
         Faculty faculty = facultyMapper.searchFacultyByFacultyId(faculty_id);
