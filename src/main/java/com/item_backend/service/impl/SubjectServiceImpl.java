@@ -130,10 +130,6 @@ public class SubjectServiceImpl implements SubjectService {
      */
     @Override
     public void updateSubjectInRedis(Integer facultyId) throws JsonProcessingException {
-        if(redisTemplate.hasKey(RedisConfig.REDIS_SUBJECT + facultyId)){
-            redisTemplate.delete(RedisConfig.REDIS_SUBJECT + facultyId);
-        }
-        // System.out.println(getSubjectCount(facultyId));
         List<Subject> subjectList = subjectMapper.searchSubjectList(0, getSubjectCount(facultyId));
         Iterator<Subject> iter = subjectList.iterator();
         List<SubjectDto> subjectDtoList = new ArrayList<>();
