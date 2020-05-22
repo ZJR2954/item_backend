@@ -4,8 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
+import com.item_backend.service.impl.ChapterServiceImpl;
+import com.item_backend.service.impl.QuestionTypeServiceImpl;
+import com.item_backend.service.impl.SubjectServiceImpl;
 import com.item_backend.service.impl.UserServiceImpl;
 import com.item_backend.utils.FormatUtil;
+import com.item_backend.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
- * @Description:
+ * @Description: 用户控制层
  * @Author: Mt.Li & xiao
  * @Create: 2020-05-12 11:15
  */
@@ -25,14 +29,28 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserServiceImpl userService;
+
+    @Autowired
+    SubjectServiceImpl subjectService;
+
+    @Autowired
+    ChapterServiceImpl chapterService;
+
+    @Autowired
+    QuestionTypeServiceImpl questionTypeService;
 
     @Autowired
     FormatUtil formatUtil;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    HttpServletRequest request;
+
     /**
      * 用户登录
-     *
      * @param user
      * @return Result：状态码+msg+(data)
      */
@@ -45,11 +63,11 @@ public class UserController {
         try {
             Map map = null;
             try {
-                map = userServiceImpl.login(user);
+                map = userService.login(user);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            if (map.containsKey("msg")) {
+            if (map.containsKey("msg")){
                 return Result.create(StatusCode.LOGINERROR, map.get("msg").toString());
             }
             return Result.create(StatusCode.OK, "登录成功", map);
@@ -58,12 +76,25 @@ public class UserController {
         }
     }
 
+    /**
+     * 用户登出
+     * @return Result：状态码+msg
+     */
+    @ApiOperation(value = "用户登出",notes = "Result：状态码+msg;删除redis中的key", httpMethod = "GET")
+    @GetMapping("/logout")
+    public Result logout() {
+        if(userService.logout()) {
+            return Result.create(StatusCode.OK, "退出成功");
+        }
+        return Result.create(StatusCode.ERROR, "退出失败");
+    }
+
     @ApiOperation(value = "个人信息", notes = "Result：状态码+msg+(data)", httpMethod = "GET")
     @GetMapping("/profile")
     public Result profile(HttpServletRequest request) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         try {
-            Map map = userServiceImpl.getProfile(token);
+            Map map = userService.getProfile(token);
             if (map.get("msg") != null) {
                 return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
             }
@@ -76,9 +107,9 @@ public class UserController {
     @ApiOperation(value = "修改个人信息", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
     @PutMapping("/update")
     public Result updateUserDetail(HttpServletRequest request, @RequestBody User user) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         try {
-            Map map = userServiceImpl.updateUserDetail(token, user);
+            Map map = userService.updateUserDetail(token, user);
             if (map.get("msg") != null) {
                 return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
             }
@@ -91,9 +122,9 @@ public class UserController {
     @ApiOperation(value = "修改登录密码", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
     @PutMapping("/change_password")
     public Result changePassword(HttpServletRequest request, @RequestBody Map reqMap) {
-        String token = request.getHeader("token");
+        String token = request.getHeader("Authorization");
         try {
-            Map map = userServiceImpl.changePassword(token, reqMap.get("oldPassword").toString(), reqMap.get("newPassword").toString());
+            Map map = userService.changePassword(token, reqMap.get("oldPassword").toString(), reqMap.get("newPassword").toString());
             if (map.get("msg") != null) {
                 return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
             }
@@ -102,5 +133,4 @@ public class UserController {
             return Result.create(StatusCode.ERROR, re.getMessage());
         }
     }
-
 }

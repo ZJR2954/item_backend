@@ -11,7 +11,7 @@
         <result property="faculty_id" column="faculty_id"/>
     </resultMap>
 
-    <insert id="saveMajor" parameterType="Major">
+    <insert id="addMajor" parameterType="Major">
         INSERT INTO major(major_id, major_name, faculty_id)
         VALUES(#{major_id}, #{major_name}, #{faculty_id})
     </insert>
@@ -25,5 +25,11 @@
     <delete id="deleteMajorByMajorId" parameterType="Integer">
         DELETE FROM major WHERE major_id = #{major_id}
     </delete>
+
+    <select id="searchMajorById" parameterType="Integer" resultMap="Major">
+        SELECT major_id, faculty_id, major_name
+        from major
+        WHERE major_id = #{value}
+    </select>
 
 </mapper>
