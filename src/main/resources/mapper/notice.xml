@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace= "com.item_backend.mapper.NoticeMapper" >
+
+    <resultMap id ="Notice" type="com.item_backend.model.entity.Notice">
+        <result column="n_id" property="n_id"/>
+        <result column="n_title" property="n_title"/>
+        <result column="n_content" property="n_content"/>
+        <result column="publish_time" property="publish_time"/>
+        <result column="u_name" property="u_name"/>
+        <result column="u_id" property="u_id"/>
+    </resultMap>
+
+    <select id = "findManagerNotice" parameterType="Integer" resultMap="Notice">
+        select * from notice where u_id in(select u_id from school where school_id=#{school_id})
+    </select>
+
+    <select id = "findSuperManagerNotice" parameterType="java.lang.Integer" resultMap="Notice">
+       select * from notice where u_id in(select u_id from school where school_id = #{id})
+    </select>
+
+    <insert id="saveNotice" parameterType="com.item_backend.model.entity.Notice">
+        insert into notice(n_title,n_content,u_name,u_id) values(#{n_title},#{n_content},#{u_name},#{u_id})
+    </insert>
+
+    <delete id="deleteNoticeById" parameterType="Integer">
+       delete from notice where n_id=#{id}
+    </delete>
+
+    <select id="getSchoolIdForNotice" parameterType="com.item_backend.model.entity.Notice" resultType="Integer">
+        select school_id from school where u_id=#{u_id};
+    </select>
+
+    <select id="getSchoolIdFromNid" resultType="Integer" parameterType="Integer">
+      SELECT school_id from school where u_id in( select u_id from notice where n_id = #{id} )
+    </select>
+
+</mapper>

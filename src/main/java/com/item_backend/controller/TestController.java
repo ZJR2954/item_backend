@@ -1,8 +1,8 @@
 package com.item_backend.controller;
 
+import com.item_backend.model.entity.TestUser;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
-import com.item_backend.model.entity.TestUser;
 import com.item_backend.service.impl.TestUserServiceImpl;
 import com.item_backend.utils.FormatUtil;
 import com.item_backend.utils.JwtTokenUtil;

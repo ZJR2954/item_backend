@@ -50,6 +50,14 @@
             <version>2.1.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.12</version>
+        </dependency>
+
+
         <!-- swagger -->
         <dependency>
             <groupId>io.swagger</groupId>
@@ -116,6 +124,14 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.9</version>
         </dependency>
+
+        <!--UEditor配置工具-->
+        <dependency>
+            <groupId>com.gitee.qdbp.thirdparty</groupId>
+            <artifactId>ueditor</artifactId>
+            <version>1.4.3.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -3,6 +3,8 @@ package com.item_backend.utils;
 import com.item_backend.config.JwtConfig;
 import com.item_backend.model.dto.UserDto;
 import com.item_backend.model.entity.User;
+import com.item_backend.model.pojo.Result;
+import com.item_backend.model.pojo.StatusCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -25,6 +27,23 @@ public class JwtTokenUtil implements Serializable {
     @Autowired
     private JwtConfig jwtConfig;
 
+
+    // 对角色进行检测
+    public Boolean checkUserType(HttpServletRequest request, String role){
+        String token = request.getHeader(jwtConfig.getHeader());
+        token = token.substring(jwtConfig.getPrefix().length());
+        // 判断是否符合传进来的角色
+        String str = getRolesFromToken(token);
+        try {
+            if (str.equals(role)){
+                return true;
+            }
+        }catch (NullPointerException e){
+            throw new RuntimeException("无token");
+        }
+
+        return false;
+    }
 
     /**
      * 从request中获取用户id
@@ -51,7 +70,6 @@ public class JwtTokenUtil implements Serializable {
             final Claims claims = getClaimsFromToken(token);
             // key为“sub”
             String str = claims.getSubject();
-
             if(claims.getSubject()!=null){
                 uId = Integer.valueOf(str);
             }
@@ -67,7 +85,7 @@ public class JwtTokenUtil implements Serializable {
         Date created;
         try {
             final Claims claims = getClaimsFromToken(token);
-            created = new Date((Long)claims.get(CLAIM_KEY_CREATED));
+            created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
         } catch (Exception e) {
             created = null;
         }
@@ -107,7 +125,7 @@ public class JwtTokenUtil implements Serializable {
     /**
      * @Description: 解密获取用户信息
      * @Author: Mt.Li
-    */
+     */
     private Claims getClaimsFromToken(String token) {
         Claims claims;
         try {
@@ -130,7 +148,6 @@ public class JwtTokenUtil implements Serializable {
         // 当前毫秒级时间 + yml中的time * 1000
         return new Date(System.currentTimeMillis() + jwtConfig.getTime() * 1000);
     }
-
 
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
@@ -170,7 +187,7 @@ public class JwtTokenUtil implements Serializable {
     /**
      * @Description: 判断是否要刷新token
      * @Author: Mt.Li
-    */
+     */
     public Boolean canTokenBeRefreshed(String token) {
         return !isTokenExpired(token);
     }
@@ -178,7 +195,7 @@ public class JwtTokenUtil implements Serializable {
     /**
      * @Description: 刷新token，代表当前用户活跃，重新赋予30分钟
      * @Author: Mt.Li
-    */
+     */
     public String refreshToken(String token) {
         String refreshedToken;
         try {
@@ -199,10 +216,13 @@ public class JwtTokenUtil implements Serializable {
      * @return
      */
     public Boolean validateToken(String token, User user) {
+
         final Integer uId = getUIDFromToken(token);  //从token中取出用户名
+
         return ((uId == user.getU_id())
                 &&
                 !isTokenExpired(token) //校验是否过期
+
         );
     }
 
@@ -216,7 +236,9 @@ public class JwtTokenUtil implements Serializable {
         String roles;
         try {
             final Claims claims = getClaimsFromToken(authToken);
-            roles = (String)claims.get(CLAIM_KEY_ROLES);
+
+            roles = (String) claims.get(CLAIM_KEY_ROLES);
+
         } catch (Exception e) {
             roles = null;
         }

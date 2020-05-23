@@ -14,13 +14,22 @@ import java.util.List;
 @ToString
 public class PageResult<T> {
 
-    private Long total; // 数据总数
-    private List<T> rows; // 数据
 
-    public PageResult(Long total, List<T> rows) {
-        // 调用父类无参构造方法,无类型即Object
+    private Integer total; // 数据总数
+    private List<T> rows; // 数据
+    private String message;
+    private Integer code; // 返回状态码
+
+    public PageResult(Integer total, List<T> rows) {
         super();
         this.total = total;
         this.rows = rows;
+    }
+
+    public PageResult(Integer total, List<T> rows, String message, Integer code) {
+        this.total = total;
+        this.rows = rows;
+        this.message = message;
+        this.code = code;
     }
 }
