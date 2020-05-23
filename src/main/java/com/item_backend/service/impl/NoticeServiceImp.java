@@ -13,10 +13,6 @@ import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
 import com.item_backend.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -32,23 +28,12 @@ public class NoticeServiceImp implements NoticeService {
 
     @Autowired
     RedisTemplate<String,String> redisTemplate;
+
     @Autowired
     ObjectMapper objectMapper;
 
     @Override
-    public Result getNoticeList(PageQueryInfo pageQueryInfo) {
-        // 先查询缓存中是否存在
-        if(redisTemplate.hasKey(RedisConfig.REDIS_NOTICE + pageQueryInfo.getQuery()+pageQueryInfo.getPageNum()+pageQueryInfo.getPageSize())){
-
-            // 缓存中不存在，先查询所有的学科信息放入redis中
-            String result= redisTemplate.opsForValue().get(RedisConfig.REDIS_NOTICE + pageQueryInfo.getQuery()+pageQueryInfo.getPageNum()+pageQueryInfo.getPageSize());
-            try {
-             Result res=  objectMapper.readValue(result,Result.class);
-             return res;
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
+    public List<Notice> getNoticeList(PageQueryInfo pageQueryInfo,Integer SchoolId) {
 
 
         if (pageQueryInfo.getQuery()!=""){ }
@@ -62,13 +47,10 @@ public class NoticeServiceImp implements NoticeService {
             pageSize = pageQueryInfo.getPageSize();
 
         Page page= PageHelper.startPage(pageNum, pageSize);
-
-
-
-        ArrayList<Notice> notices= (ArrayList<Notice>) noticeMapper.findAllNotice();
+        ArrayList<Notice> managerNotice= (ArrayList<Notice>) noticeMapper.findManagerNotice(SchoolId);
 
         /*消息按时间排序，最近的消息放在最前边*/
-        Collections.sort(notices, new Comparator<Notice>() {
+        Collections.sort(managerNotice, new Comparator<Notice>() {
             @Override
             public int compare(Notice o1, Notice o2) {
                 //返回正值是代表左侧日期大于参数日期
@@ -79,26 +61,10 @@ public class NoticeServiceImp implements NoticeService {
             }
         });
 
-        NoticeDto noticeDto=new NoticeDto();
-        noticeDto.setNotices(notices);
-        noticeDto.setPageNum(page.getPageNum());
-        noticeDto.setTotal((int) page.getTotal());
 
-        String msg="获取数据成功";
-        if (notices.size()==0){
-            msg="后台没有数据";
-        }
+        /*---------------------------*/
 
-        Result result=new Result(StatusCode.OK,msg,noticeDto);
-
-        try {
-            redisTemplate.opsForValue().set(RedisConfig.REDIS_NOTICE + pageQueryInfo.getQuery()+pageQueryInfo.getPageNum()+pageQueryInfo.getPageSize(),
-                    objectMapper.writeValueAsString(result));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return result;
+        return managerNotice;
 
     }
 
@@ -127,7 +93,7 @@ public class NoticeServiceImp implements NoticeService {
     }
 
     @Override
-    public Map deleteNoticeByIdService(int n_id) {
+    public Map deleteNoticeByIdService(Integer n_id) {
         int num=  noticeMapper.deleteNoticeById(n_id);
 
         Map map=new HashMap();
@@ -142,4 +108,37 @@ public class NoticeServiceImp implements NoticeService {
 
         return map;
     }
+
+    @Override
+    public int getSchoolIdForNotice(Notice notice) {
+      int id=  noticeMapper.getSchoolIdForNotice(notice);
+
+        return id;
+    }
+
+    @Override
+    public int getSchoolIdFromNid(Integer n_id) {
+       return  noticeMapper.getSchoolIdFromNid(n_id);
+    }
+
+    public List<Notice> getSuperManagerNotice(){
+        Page page= PageHelper.startPage(1, 3);
+       List<Notice> superManagerNotice= noticeMapper.findSuperManagerNotice(0);
+
+        Collections.sort(superManagerNotice, new Comparator<Notice>() {
+            @Override
+            public int compare(Notice o1, Notice o2) {
+                //返回正值是代表左侧日期大于参数日期
+                int flag = o1.getPublish_time().compareTo(o2.getPublish_time());
+                if (flag > 0)
+                    return -1;
+                return 1;
+            }
+        });
+
+       return superManagerNotice;
+    }
+
+
+
 }

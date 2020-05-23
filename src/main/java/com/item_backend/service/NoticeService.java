@@ -2,12 +2,14 @@ package com.item_backend.service;
 
 import com.item_backend.model.entity.Notice;
 import com.item_backend.model.entity.PageQueryInfo;
-import com.item_backend.model.pojo.Result;
 
+import java.util.List;
 import java.util.Map;
 
 public interface NoticeService {
-    Result getNoticeList(PageQueryInfo pageQueryInfo);
+    List<Notice> getNoticeList(PageQueryInfo pageQueryInfo, Integer SchoolId);
     Map saveNoticeService(Notice notice);
-    Map deleteNoticeByIdService(int id);
+    Map deleteNoticeByIdService(Integer id);
+    int getSchoolIdForNotice(Notice notice);
+    int getSchoolIdFromNid(Integer u_id);
 }
