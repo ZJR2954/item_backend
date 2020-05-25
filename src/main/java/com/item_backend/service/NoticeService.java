@@ -7,9 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 public interface NoticeService {
-    List<Notice> getNoticeList(PageQueryInfo pageQueryInfo, Integer SchoolId);
-    Map saveNoticeService(Notice notice);
-    Map deleteNoticeByIdService(Integer id);
-    int getSchoolIdForNotice(Notice notice);
-    int getSchoolIdFromNid(Integer u_id);
+
+
+    Integer  saveManagerNoticeService(Notice notice);
+    Integer  saveSuperManagerNoticeService(Notice notice);
+
+   Integer deleteManagerNoticeByNoticeIdService(Integer id);
+   Integer deleteSuperManagerNoticeByNoticeIdService(Integer id);
+
+    List<Notice> getSuperManagerNoticeService(Integer school_id);
+    List<Notice> getManagerNoticeService(Integer school_id);
+
+    Integer getSchoolIdForNoticeUidService(Notice notice);
+    Integer getSchoolIdFromNidService(Integer n_id);
 }

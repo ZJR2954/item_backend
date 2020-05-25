@@ -1,9 +1,8 @@
 package com.item_backend.controller.notice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
 import com.item_backend.config.RedisConfig;
-import com.item_backend.mapper.NoticeMapper;
+
 import com.item_backend.model.entity.Notice;
 import com.item_backend.model.entity.PageQueryInfo;
 import com.item_backend.model.pojo.Result;
@@ -14,12 +13,15 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+
 import javax.annotation.Resource;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /*
@@ -30,17 +32,12 @@ import java.util.*;
 @RestController
 @RequestMapping("/notice")
 public class NoticeController {
-    @Autowired
-    NoticeMapper noticeMapper;
-
     @Resource
     NoticeServiceImp noticeServiceImp;
 
+    @Qualifier("myCacheManager")
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    RedisTemplate<String,String> redisTemplate;
+    CacheManager myCacheManager;
 
     @ApiOperation("获取通知消息")
     @GetMapping("/getNoticeList/{school_id}")//+ shcollid 地址栏上不用驼峰
@@ -49,68 +46,28 @@ public class NoticeController {
             @ApiImplicitParam(name = "pageNum", value = "页号", defaultValue = "1"),
             @ApiImplicitParam(name = "pageSize", value = "每页大小", defaultValue = "8")
     })
+
     /*自动封装，如果时字符串没有找到，就是空串， 如果是其他数据类型，没有就是null*/
-    public Result getNoticeList(PageQueryInfo pageQueryInfo, @PathVariable("school_id") int SchoolId) {
-        // 先查询缓存中是否存在
-        if(redisTemplate.hasKey(RedisConfig.REDIS_NOTICE + SchoolId)&&redisTemplate.hasKey(RedisConfig.REDIS_NOTICE+"superManagernoticeList")){
-            // 缓存中不存在，先查询所有的学科信息放入redis中
-            String result= redisTemplate.opsForValue().get(RedisConfig.REDIS_NOTICE + SchoolId);
-            try {
-
-                int pagenum=pageQueryInfo.getPageNum();
-                int pagesize=pageQueryInfo.getPageSize();
-
-
-                List managerNoticeList=  objectMapper.readValue(result,List.class);
-                List partManagerNoticeList=null;
-                /*如果超过界限 则返回最后的数据*/
-                if (pagenum*pagesize>managerNoticeList.size()+1){
-                     partManagerNoticeList =managerNoticeList.subList(managerNoticeList.size()-pagesize,managerNoticeList.size());
-                }else {
-                    partManagerNoticeList =managerNoticeList.subList((pagenum-1)*pagesize,pagenum*pagesize);
-                }
-                //在redis中分页
-
-
-                String res=redisTemplate.opsForValue().get(RedisConfig.REDIS_NOTICE + "superManagernoticeList");
-                List superManagernoticeList= objectMapper.readValue(res,List.class);
-                //在超级管理员中分页
-                List superManagerNoticeListPart;
-                if (superManagernoticeList.size() > 3) {
-                     superManagerNoticeListPart=superManagernoticeList.subList(0,3);
-                }
-                else {
-                    superManagerNoticeListPart=superManagernoticeList.subList(0,superManagernoticeList.size());
-                }
-
-
-              Map map=new HashMap();
-              map.put("managerNoticeList",partManagerNoticeList);
-              map.put("superManagernoticeList",superManagerNoticeListPart);
-               return new Result(StatusCode.OK,"获取消息成功",map);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+    @Transactional
+   @Cacheable(cacheNames = RedisConfig.REDIS_NOTICE,key ="#SchoolId+''+#pageQueryInfo.pageNum+''+#pageQueryInfo.pageSize" )
+    public Result getNoticeList(PageQueryInfo pageQueryInfo, @PathVariable("school_id") Integer SchoolId) {
+        if (SchoolId!=null) {
+            if (SchoolId > 0) {
+                PageHelper.startPage(pageQueryInfo.getPageNum(), pageQueryInfo.getPageSize());
+                List<Notice> managerNoticeList = noticeServiceImp.getManagerNoticeService(SchoolId);
+                System.out.println("managerNoticeList---size-->"+managerNoticeList.size());
+                //超级管理与只保留前三条信息
+                PageHelper.startPage(1, 3);
+                List<Notice> superManagerNoticeList = noticeServiceImp.getSuperManagerNoticeService(0);
+                System.out.println("managerNoticeList---size--->"+superManagerNoticeList.size());
+                Map map=new HashMap();
+                map.put("managerNoticeList",managerNoticeList);
+                map.put("superManagerNoticeList",superManagerNoticeList);
+                return new Result(StatusCode.OK,"获取消息成功",map);
             }
         }
-        List<Notice> ManagerNotice = noticeServiceImp.getNoticeList(pageQueryInfo,SchoolId);
-        List<Notice> superManagerNotice=noticeServiceImp.getSuperManagerNotice();
-
-        Map map=new HashMap();
-        map.put("managerNoticeList",ManagerNotice);
-        map.put("superManagernoticeList",superManagerNotice);
-
-        try {
-            String strManger= objectMapper.writeValueAsString(ManagerNotice);
-            String strSuperManager=objectMapper.writeValueAsString(superManagerNotice);
-
-            redisTemplate.opsForValue().set(RedisConfig.REDIS_NOTICE + SchoolId,strManger);
-            redisTemplate.opsForValue().set(RedisConfig.REDIS_NOTICE+"superManagernoticeList",strSuperManager);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return new Result(StatusCode.OK,"获取成功",map);
+            return null;
     }
-
 
     @ApiOperation("添加消息")
     @PostMapping("/saveNotice")
@@ -120,63 +77,25 @@ public class NoticeController {
             @ApiImplicitParam(name = "u_name", value = "提交消息的用户", defaultValue = "hahaha"),
             @ApiImplicitParam(name = "u_id", value = "用户id", defaultValue = "4")
     })
-
-    //@requestBody
-    public Map saveNotice(@RequestBody Notice notice) {
-        System.out.println(notice);
-
-        Map data = noticeServiceImp.saveNoticeService(notice);
-        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        notice.setPublish_time(dateFormat.format(new Date()));
-
-      int school_id = noticeServiceImp.getSchoolIdForNotice(notice);
-      if (school_id > 0 && redisTemplate.hasKey(RedisConfig.REDIS_NOTICE + school_id)){
-          try {
-              List<Notice> managerNotice=objectMapper.readValue(redisTemplate.opsForValue().get(RedisConfig.REDIS_NOTICE + school_id),List.class);
-              managerNotice.add(notice);
-
-              Collections.sort(managerNotice, new Comparator<Notice>() {
-                  @Override
-                  public int compare(Notice o1, Notice o2) {
-                      //返回正值是代表左侧日期大于参数日期
-                      int flag = o1.getPublish_time().compareTo(o2.getPublish_time());
-                      if (flag > 0)
-                          return -1;
-                      return 1;
-                  }
-              });
-
-              String managerNoticestr=  objectMapper.writeValueAsString(managerNotice);
-              redisTemplate.opsForValue().set(RedisConfig.REDIS_NOTICE + school_id,managerNoticestr);
-
-          } catch (JsonProcessingException e) {
-              e.printStackTrace();
-          }
-      }else {
-          try {
-              if (redisTemplate.hasKey(RedisConfig.REDIS_NOTICE+"superManagernoticeList")){
-                  List<Notice> SupermanagerNotice=objectMapper.readValue(redisTemplate.opsForValue().get(RedisConfig.REDIS_NOTICE+"superManagernoticeList"),List.class);
-                  SupermanagerNotice.add(notice);
-
-                  Collections.sort(SupermanagerNotice, new Comparator<Notice>() {
-                      @Override
-                      public int compare(Notice o1, Notice o2) {
-                          //返回正值是代表左侧日期大于参数日期
-                          int flag = o1.getPublish_time().compareTo(o2.getPublish_time());
-                          if (flag > 0)
-                              return -1;
-                          return 1;
-                      }
-                  });
-
-                  String SupermanagerNoticeStr=  objectMapper.writeValueAsString(SupermanagerNotice);
-                  redisTemplate.opsForValue().set(RedisConfig.REDIS_NOTICE+"superManagernoticeList",SupermanagerNoticeStr);
-              }
-          } catch (JsonProcessingException e) {
-              e.printStackTrace();
-          }
-      }
-        return data;
+    @Transactional
+    public Result saveNotice(@RequestBody Notice notice) {
+       Integer school_id= noticeServiceImp.getSchoolIdForNoticeUidService(notice);
+       Integer changerrow;
+       String msg="保存了0条消息";
+       if (school_id!=null){
+           if (school_id>0){
+             changerrow=  noticeServiceImp.saveManagerNoticeService(notice);
+           }else {
+             changerrow=  noticeServiceImp.saveSuperManagerNoticeService(notice);
+           }
+           if (changerrow>0){
+               msg="保存了"+changerrow+"行消息";
+           }
+           /*保存数据时需要清空 notice 对应的缓存区*/
+           myCacheManager.getCache(RedisConfig.REDIS_NOTICE).clear();
+           return new Result(StatusCode.OK,msg,null);
+       }
+        return new Result(StatusCode.ERROR,"消息不属于任何学校",null);
     }
 
 
@@ -185,30 +104,25 @@ public class NoticeController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "n_id", value = "消息id", defaultValue = "42"),
     })
+    @Transactional
+    public Result deleteNoticeById(@PathVariable("id") int n_id) {
+            Integer school_id=noticeServiceImp.getSchoolIdFromNidService(n_id);
+             Integer changerrow;
+            String msg="删除了0条消息";
+            if (school_id!=null){
+                if (school_id>0){
+                    changerrow=  noticeServiceImp.deleteManagerNoticeByNoticeIdService(n_id);
+                }else {
+                    changerrow=  noticeServiceImp.deleteSuperManagerNoticeByNoticeIdService(n_id);
+                }
+                if (changerrow>0){
+                    msg="删除了"+changerrow+"行消息";
+                }
+                /*删除数据时需要清空 notice 对应的缓存区*/
+                myCacheManager.getCache(RedisConfig.REDIS_NOTICE).clear();
+                return new Result(StatusCode.OK,msg,null);
+            }
 
-    public Map deleteNoticeById(@PathVariable("id") int n_id) {
-        System.out.println("n_id====>"+n_id);
-        //要在删除消息之前获取到学校的id
-        int schoolId = noticeServiceImp.getSchoolIdFromNid(n_id);
-
-        Map data = noticeServiceImp.deleteNoticeByIdService(n_id);
-        //更新超级管理员的redis
-         List<Notice> superManageNotice= noticeServiceImp.getSuperManagerNotice();
-        try {
-          String superManageNoticeStr=  objectMapper.writeValueAsString(superManageNotice);
-            redisTemplate.opsForValue().set(RedisConfig.REDIS_NOTICE+"superManagernoticeList",superManageNoticeStr);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-       List<Notice> ManagerNotices= noticeMapper.findManagerNotice(schoolId);
-
-        try {
-            String ManagerNoticesStr=  objectMapper.writeValueAsString(ManagerNotices);
-            redisTemplate.opsForValue().set(RedisConfig.REDIS_NOTICE + schoolId,ManagerNoticesStr);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return data;
+        return new Result(StatusCode.ERROR,"删除失败--消息不属于学校",null);
     }
 }
