@@ -70,8 +70,7 @@ public class JwtTokenUtil implements Serializable {
             final Claims claims = getClaimsFromToken(token);
             // key为“sub”
             String str = claims.getSubject();
-
-            if (claims.getSubject() != null) {
+            if(claims.getSubject()!=null){
                 uId = Integer.valueOf(str);
             }
 
@@ -217,7 +216,9 @@ public class JwtTokenUtil implements Serializable {
      * @return
      */
     public Boolean validateToken(String token, User user) {
-        final Integer uId = getUIDFromToken(token);  //从token中取出UID
+
+        final Integer uId = getUIDFromToken(token);  //从token中取出用户名
+
         return ((uId == user.getU_id())
                 &&
                 !isTokenExpired(token) //校验是否过期
@@ -235,7 +236,9 @@ public class JwtTokenUtil implements Serializable {
         String roles;
         try {
             final Claims claims = getClaimsFromToken(authToken);
+
             roles = (String) claims.get(CLAIM_KEY_ROLES);
+
         } catch (Exception e) {
             roles = null;
         }
