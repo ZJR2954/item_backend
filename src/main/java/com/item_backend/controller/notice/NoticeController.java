@@ -189,7 +189,7 @@ public class NoticeController {
     public Map deleteNoticeById(@PathVariable("id") int n_id) {
         System.out.println("n_id====>"+n_id);
         //要在删除消息之前获取到学校的id
-        int schoolId = noticeServiceImp.getSchoolIdFromNid(n_id);
+        Integer schoolId = noticeServiceImp.getSchoolIdFromNid(n_id);
 
         Map data = noticeServiceImp.deleteNoticeByIdService(n_id);
         //更新超级管理员的redis
