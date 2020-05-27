@@ -16,12 +16,12 @@ public interface UserMapper {
     User searchUserBySchoolAndJobNumber(User user);
 
     //更新用户信息
-    void updateUser(User user);
+    int updateUser(User user);
 
     //根据用户id和登录密码查询用户
     User searchUserByUIdAndPassword(@Param("u_id") Integer u_id, @Param("password") String password);
 
     //修改用户登录密码
-    void changePassword(@Param("u_id") Integer u_id, @Param("newPassword") String newPassword);
+    int changePassword(@Param("u_id") Integer u_id, @Param("newPassword") String newPassword);
 
 }
