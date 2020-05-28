@@ -46,4 +46,54 @@
         WHERE u_id = #{u_id}
     </update>
 
+    <select id="getFacultyAdminCount" parameterType="Integer" resultType="Integer">
+        select COUNT(1)
+        from  faculty
+        where school in (select school_name from school where school_id = #{id})
+    </select>
+
+    <select id="getTeacherCount" parameterType="Integer" resultType="Integer">
+        select COUNT(1)
+        from  user
+        where u_faculty in (select faculty_name from faculty where faculty_id = #{id})
+    </select>
+
+    <select id="searchUserListBySchoolId" parameterType="Integer" resultMap="User">
+        SELECT f.u_id, u.u_type, f.faculty_name as u_faculty, u.job_number, name, u.id_number,
+         u.email, u.telephone, u.operate_subject, u.u_state
+        from faculty f left join user u
+        on f.u_id = u.u_id
+        where f.school in (select school_name from school where school_id = #{school_id})
+        order by f.u_id
+        limit #{start}, #{showCount}
+    </select>
+
+    <select id="searchUserListByFacultyId" parameterType="Integer" resultType="com.item_backend.model.dto.TeacherDto">
+        SELECT u.u_id, u.u_type, u.job_number, u.name, u.id_number,
+         u.email, u.telephone, u.operate_subject, u.u_state, u.u_school, u.u_faculty,
+         s.subject_name, ut.u_type_name
+        from (user u left join subject s on u.operate_subject = s.subject_id)
+            left join user_type ut on u.u_type = ut.u_type
+        where u.u_faculty in
+            (select faculty_name from faculty where faculty_id = 21)
+        and u.u_school
+            in(select school_name from school where school_id = 1)
+        and u.u_type
+            in(4,5)
+        order by u.u_id
+        limit #{start}, #{showCount}
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        INSERT INTO user (u_type, u_school, u_faculty, name, job_number,
+        id_number, email, telephone, operate_subject)
+        VALUES (#{u_type}, #{u_school}, #{u_faculty}, #{name}, #{job_number},
+        #{id_number}, #{email}, #{telephone}, #{operate_subject})
+    </insert>
+
+    <delete id="deleteUser" parameterType="Integer">
+        DELETE from user
+        WHERE u_id = #{id}
+    </delete>
+
 </mapper>
