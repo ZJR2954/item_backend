@@ -1,4 +1,4 @@
-package com.item_backend.controller;
+package com.item_backend.controller.subject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.dto.SubjectDto;
