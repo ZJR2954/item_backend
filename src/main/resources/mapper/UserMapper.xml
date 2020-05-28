@@ -61,9 +61,10 @@
     <select id="searchUserListBySchoolId" parameterType="Integer" resultMap="User">
         SELECT f.u_id, u.u_type, f.faculty_name as u_faculty, u.job_number, name, u.id_number,
          u.email, u.telephone, u.operate_subject, u.u_state
-        from faculty f left join user u
-        on f.u_id = u.u_id
-        where f.school in (select school_name from school where school_id = #{school_id})
+        from faculty f
+            left join user u on f.u_id = u.u_id
+        where f.school in
+            (select school_name from school where school_id = #{school_id})
         order by f.u_id
         limit #{start}, #{showCount}
     </select>
