@@ -29,7 +29,7 @@ spring:
 ### jwt
 jwt:
   ###过期时间
-  time: 1800 # (30分钟)
+  time: 18000 # (30分钟)
   ###安全密钥
   secret: "itemBankSecret"
   ###token前缀

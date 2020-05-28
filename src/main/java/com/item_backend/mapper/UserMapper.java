@@ -25,7 +25,7 @@ public interface UserMapper {
     Boolean deleteUser(Integer id);
 
     //更新用户信息
-    void updateUser(User user);
+    int updateUser(User user);
 
     // 根据学校id获取院级管理员数量
     int getFacultyAdminCount(Integer id);
@@ -37,7 +37,7 @@ public interface UserMapper {
     User searchUserByUIdAndPassword(@Param("u_id") Integer u_id, @Param("password") String password);
 
     //修改用户登录密码
-    void changePassword(@Param("u_id") Integer u_id, @Param("newPassword") String newPassword);
+    int changePassword(@Param("u_id") Integer u_id, @Param("newPassword") String newPassword);
 
     // 根据学校id查询院级管理员用户列表
     List<User> searchUserListBySchoolId(@Param("school_id") Integer school_id,

@@ -7,10 +7,22 @@
 
     <resultMap id="Faculty" type="Faculty">
         <id property="faculty_id" column="faculty_id"/>
-        <result property="u_id" column="u_id"/>
         <result property="faculty_name" column="faculty_name"/>
         <result property="school" column="school"/>
+        <result property="u_id" column="u_id"/>
     </resultMap>
+
+    <select id="searchFacultyByFacultyId" parameterType="Integer" resultType="Faculty">
+        SELECT *
+        from faculty
+        WHERE faculty_id = #{faculty_id}
+    </select>
+
+    <select id="searchFacultyByUId" parameterType="Integer" resultMap="Faculty">
+        SELECT *
+        from faculty
+        WHERE u_id = #{u_id}
+    </select>
 
     <select id="searchFacultyIdByFacultyName" resultType="Integer">
         SELECT faculty_id
@@ -23,4 +35,5 @@
         from faculty
         WHERE u_id = #{id}
     </select>
+
 </mapper>
