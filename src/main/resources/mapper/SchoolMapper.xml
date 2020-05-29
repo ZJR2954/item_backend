@@ -14,7 +14,7 @@
     <select id="searchSchoolIdBySchoolName" parameterType="String" resultType="Integer">
         SELECT school_id
         from school
-        WHERE school_name = #{subject_id}
+        WHERE school_name = #{schoolName}
     </select>
 
     <select id="searchSchoolIdByAdminId" parameterType="Integer" resultType="Integer">
@@ -22,4 +22,11 @@
         from school
         WHERE u_id = #{id}
     </select>
+
+    <select id="searchSchoolBySchoolName" parameterType="String" resultType="School">
+        SELECT *
+        from school
+        WHERE school_name = #{schoolName}
+    </select>
+
 </mapper>

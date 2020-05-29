@@ -43,10 +43,9 @@ public class MajorServiceImpl implements MajorService {
      * 根据院系id查询专业列表
      *
      * @param
-     * @return Map
+     * @return List
      * @Author xiao
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public List<MajorDto> searchMajorListByFacultyId(Integer faculty_id) throws JsonProcessingException {
         // 先查询缓存中是否存在
@@ -64,7 +63,7 @@ public class MajorServiceImpl implements MajorService {
      * 添加专业
      *
      * @param
-     * @return Map
+     * @return Boolean
      * @Author xiao
      */
     @Transactional(rollbackFor = Exception.class)
@@ -82,7 +81,7 @@ public class MajorServiceImpl implements MajorService {
      * 根据专业id删除专业
      *
      * @param
-     * @return Map
+     * @return Boolean
      * @Author xiao
      */
     @Transactional(rollbackFor = Exception.class)

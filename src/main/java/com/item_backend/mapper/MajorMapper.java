@@ -1,7 +1,6 @@
 package com.item_backend.mapper;
 
 import com.item_backend.model.entity.Major;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,9 +20,9 @@ public interface MajorMapper {
     Major searchMajorById(Integer id);
 
     //根据院系id查询专业列表
-    List<Major> searchMajorByFacultyId(@Param("faculty_id") Integer faculty_id);
+    List<Major> searchMajorByFacultyId(Integer faculty_id);
 
     //根据专业id删除专业
-    int deleteMajorByMajorId(@Param("major_id") Integer major_id);
+    int deleteMajorByMajorId(Integer major_id);
 
 }
