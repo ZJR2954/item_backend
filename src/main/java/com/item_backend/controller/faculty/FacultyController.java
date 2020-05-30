@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.config.JwtConfig;
 import com.item_backend.model.dto.FacultyDto;
 import com.item_backend.model.entity.Faculty;
+import com.item_backend.model.pojo.PageResult;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
 import com.item_backend.service.impl.FacultyServiceImpl;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * @Author xiao
@@ -54,8 +54,8 @@ public class FacultyController {
         if (!formatUtil.checkStringNull(school)) {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
-        List<FacultyDto> facultyDtoList = facultyService.searchFacultyListBySchoolName(school, page, showCount);
-        return Result.create(StatusCode.OK, "查询成功", facultyDtoList);
+        PageResult<FacultyDto> pageResult = facultyService.searchFacultyListBySchoolName(school, page, showCount);
+        return Result.create(StatusCode.OK, "查询成功", pageResult);
     }
 
     /**

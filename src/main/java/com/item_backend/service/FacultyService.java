@@ -3,6 +3,7 @@ package com.item_backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.dto.FacultyDto;
 import com.item_backend.model.entity.Faculty;
+import com.item_backend.model.pojo.PageResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 public interface FacultyService {
 
     //根据学校名查询院系列表
-    List<FacultyDto> searchFacultyListBySchoolName(String schoolName, Integer page, Integer showCount) throws JsonProcessingException;
+    PageResult<FacultyDto> searchFacultyListBySchoolName(String schoolName, Integer page, Integer showCount) throws JsonProcessingException;
 
     //添加院系
     Boolean addFaculty(String token, Faculty faculty) throws JsonProcessingException;

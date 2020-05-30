@@ -10,6 +10,7 @@ import com.item_backend.mapper.SchoolMapper;
 import com.item_backend.model.dto.FacultyDto;
 import com.item_backend.model.entity.Faculty;
 import com.item_backend.model.entity.School;
+import com.item_backend.model.pojo.PageResult;
 import com.item_backend.service.FacultyService;
 import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class FacultyServiceImpl implements FacultyService {
      * @Author xiao
      */
     @Override
-    public List<FacultyDto> searchFacultyListBySchoolName(String schoolName, Integer page, Integer showCount) throws JsonProcessingException {
+    public PageResult<FacultyDto> searchFacultyListBySchoolName(String schoolName, Integer page, Integer showCount) throws JsonProcessingException {
         // 先查询缓存中是否存在
         if (!redisTemplate.hasKey(RedisConfig.REDIS_FACULTY + schoolName)) {
             // 缓存中不存在，先查询所有的学科信息放入redis中
@@ -63,10 +64,12 @@ public class FacultyServiceImpl implements FacultyService {
         // redis中已经存在，直接获取
         String facultyJSON = redisTemplate.opsForValue().get(RedisConfig.REDIS_FACULTY + schoolName);
         List<FacultyDto> facultyDtoList = JSON.parseObject(facultyJSON, ArrayList.class);
+        int total = facultyDtoList.size();
         facultyDtoList = facultyDtoList.size() < page * showCount ?
                 facultyDtoList.subList((facultyDtoList.size() / showCount) * showCount, facultyDtoList.size()) :
                 facultyDtoList.subList((page - 1) * showCount, page * showCount);
-        return facultyDtoList;
+        PageResult<FacultyDto> pageResult = new PageResult<>(total, facultyDtoList);
+        return pageResult;
     }
 
     /**
