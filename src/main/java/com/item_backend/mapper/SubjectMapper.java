@@ -17,7 +17,7 @@ public interface SubjectMapper {
     Integer getSubjectCount(Integer faculty_id);
 
     // 查询学科列表
-    List<Subject> searchSubjectList(@Param("page") Integer page, @Param("showCount") Integer showCount);
+    List<Subject> searchSubjectList(@Param("facultyId") Integer facultyId,  @Param("page") Integer page, @Param("showCount") Integer showCount);
 
     // 添加学科
     Boolean addSubject(Subject subject);

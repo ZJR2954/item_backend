@@ -130,7 +130,7 @@ public class SubjectServiceImpl implements SubjectService {
      */
     @Override
     public void updateSubjectInRedis(Integer facultyId) throws JsonProcessingException {
-        List<Subject> subjectList = subjectMapper.searchSubjectList(0, getSubjectCount(facultyId));
+        List<Subject> subjectList = subjectMapper.searchSubjectList(facultyId,0, getSubjectCount(facultyId));
         Iterator<Subject> iter = subjectList.iterator();
         List<SubjectDto> subjectDtoList = new ArrayList<>();
         while(iter.hasNext()){

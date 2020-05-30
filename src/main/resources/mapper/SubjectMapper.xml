@@ -21,6 +21,7 @@
     <select id="searchSubjectList" resultMap="Subject">
         SELECT subject_id, subject_name, category, major_id
         from subject
+        where major_id in (select major_id from major where faculty_id = #{facultyId})
         ORDER BY major_id ASC
         LIMIT #{page},#{showCount}
     </select>
