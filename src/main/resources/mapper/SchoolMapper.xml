@@ -29,4 +29,18 @@
         WHERE school_name = #{schoolName}
     </select>
 
+    <select id="searchSchoolList" resultType="School">
+        SELECT *
+        from school
+    </select>
+
+    <insert id="addSchool" parameterType="School">
+        INSERT INTO school(school_name, u_id)
+        VALUES(#{school_name}, #{u_id})
+    </insert>
+
+    <delete id="deleteSchoolBySchoolId" parameterType="Integer">
+        DELETE FROM school WHERE school_id = #{school_id}
+    </delete>
+
 </mapper>
