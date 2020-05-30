@@ -46,4 +46,10 @@
         WHERE u_id = #{u_id}
     </update>
 
+    <select id="searchUserByUId" parameterType="Integer" resultMap="User">
+        SELECT u_id, u_type, u_school, u_faculty, job_number, name, id_number, email, telephone, operate_subject, u_state
+        from user
+        WHERE u_id = #{u_id}
+    </select>
+
 </mapper>

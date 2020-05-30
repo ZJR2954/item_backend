@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.item_backend.config.JwtConfig;
 import com.item_backend.config.RedisConfig;
 import com.item_backend.mapper.FacultyMapper;
-import com.item_backend.mapper.SchoolMapper;
+import com.item_backend.mapper.UserMapper;
 import com.item_backend.model.dto.FacultyDto;
 import com.item_backend.model.entity.Faculty;
-import com.item_backend.model.entity.School;
+import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.PageResult;
 import com.item_backend.service.FacultyService;
 import com.item_backend.utils.JwtTokenUtil;
@@ -32,8 +32,12 @@ public class FacultyServiceImpl implements FacultyService {
     @Autowired
     FacultyMapper facultyMapper;
 
+//    @Autowired
+//    SchoolMapper schoolMapper;
+
     @Autowired
-    SchoolMapper schoolMapper;
+    UserMapper userMapper;
+
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -116,14 +120,14 @@ public class FacultyServiceImpl implements FacultyService {
     public void updateFacultyInRedis(String schoolName) throws JsonProcessingException {
         List<Faculty> facultyList = facultyMapper.searchFacultyBySchoolName(schoolName);
         if (facultyList.size() <= 0) return;
-        School school = schoolMapper.searchSchoolBySchoolName(schoolName);
         Iterator<Faculty> iter = facultyList.iterator();
         List<FacultyDto> facultyDtoList = new ArrayList<>();
         while (iter.hasNext()) {
             Faculty f = iter.next();
+            User user = userMapper.searchUserByUId(f.getU_id());
             FacultyDto facultyDto = new FacultyDto();
             facultyDto.setFaculty(f);
-            facultyDto.setSchool(school);
+            facultyDto.setUser(user);
             facultyDtoList.add(facultyDto);
         }
         redisTemplate.opsForValue().set(RedisConfig.REDIS_FACULTY + schoolName, objectMapper.writeValueAsString(facultyDtoList));

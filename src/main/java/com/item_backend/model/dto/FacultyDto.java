@@ -1,13 +1,11 @@
 package com.item_backend.model.dto;
 
 import com.item_backend.model.entity.Faculty;
-import com.item_backend.model.entity.Major;
-import com.item_backend.model.entity.School;
+import com.item_backend.model.entity.User;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @Author xiao
@@ -22,7 +20,5 @@ public class FacultyDto implements Serializable {
 
     private Faculty faculty;
 
-    private School school;
-
-    private List<Major> majorList;
+    private User user;
 }
