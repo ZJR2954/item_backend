@@ -32,4 +32,6 @@ public interface FacultyMapper {
     //根据院系id删除院系
     int deleteFacultyByFacultyId(Integer faculty_id);
 
+    //更新院系信息
+    int updateFaculty(Faculty faculty);
 }

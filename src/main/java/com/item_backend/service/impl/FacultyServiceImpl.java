@@ -16,6 +16,7 @@ import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,12 +33,8 @@ public class FacultyServiceImpl implements FacultyService {
     @Autowired
     FacultyMapper facultyMapper;
 
-//    @Autowired
-//    SchoolMapper schoolMapper;
-
     @Autowired
     UserMapper userMapper;
-
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -83,6 +80,7 @@ public class FacultyServiceImpl implements FacultyService {
      * @return Boolean
      * @Author xiao
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean addFaculty(String token, Faculty faculty) throws JsonProcessingException {
         Integer u_id = jwtTokenUtil.getUIDFromToken(token.substring(jwtConfig.getPrefix().length()));
@@ -101,12 +99,29 @@ public class FacultyServiceImpl implements FacultyService {
      * @return Boolean
      * @Author xiao
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean deleteFacultyByFacultyId(String schoolName, Integer faculty_id) throws JsonProcessingException {
         if (facultyMapper.deleteFacultyByFacultyId(faculty_id) <= 0) {
             return false;
         }
         updateFacultyInRedis(schoolName);
+        return true;
+    }
+
+    /**
+     * 更新院系信息
+     * @param faculty
+     * @return Boolean
+     * @Author xiao
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateFaculty(Faculty faculty) throws JsonProcessingException {
+        if (facultyMapper.updateFaculty(faculty) <= 0) {
+            return false;
+        }
+        updateFacultyInRedis(faculty.getSchool());
         return true;
     }
 

@@ -6,8 +6,6 @@ import com.item_backend.model.entity.Faculty;
 import com.item_backend.model.pojo.PageResult;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * @Author xiao
  * @Time 2020/5/28
@@ -25,7 +23,11 @@ public interface FacultyService {
     //根据院系id删除院系
     Boolean deleteFacultyByFacultyId(String schoolName, Integer faculty_id) throws JsonProcessingException;
 
+    //修改院系信息
+    Boolean updateFaculty(Faculty faculty) throws JsonProcessingException;
+
     //更新redis中Faculty信息
     void updateFacultyInRedis(String schoolName) throws JsonProcessingException;
+
 
 }

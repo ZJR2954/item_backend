@@ -66,8 +66,8 @@ public class FacultyController {
      * @Author xiao
      */
     @ApiOperation(value = "添加院系", notes = "Result：状态码+msg+(data)", httpMethod = "POST")
-    @PostMapping("/add_faculty/{school}")
-    public Result addMajor(@PathVariable("school") String school, @RequestBody Faculty faculty) throws JsonProcessingException {
+    @PostMapping("/add_faculty")
+    public Result addMajor(@RequestBody Faculty faculty) throws JsonProcessingException {
         // 判断权限
         if (!jwtTokenUtil.checkUserType(request, "校级管理员")) {
             return Result.create(StatusCode.ACCESSERROR, "无权限");
@@ -103,5 +103,28 @@ public class FacultyController {
             return Result.create(StatusCode.ERROR, "删除失败");
         }
         return Result.create(StatusCode.OK, "删除成功");
+    }
+
+    /**
+     * 修改院系信息
+     *
+     * @param
+     * @return Result：状态码+msg+(data)
+     * @Author xiao
+     */
+    @ApiOperation(value = "修改院系信息", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
+    @PutMapping("/update_faculty")
+    public Result updateMajor(@RequestBody Faculty faculty) throws JsonProcessingException {
+        // 判断权限
+        if (!jwtTokenUtil.checkUserType(request, "校级管理员")) {
+            return Result.create(StatusCode.ACCESSERROR, "无权限");
+        }
+        if (!formatUtil.checkObjectNull(faculty)) {
+            return Result.create(StatusCode.ERROR, "参数错误");
+        }
+        if (!facultyService.updateFaculty(faculty)) {
+            return Result.create(StatusCode.ERROR, "修改失败");
+        }
+        return Result.create(StatusCode.OK, "修改成功");
     }
 }

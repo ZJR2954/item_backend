@@ -45,5 +45,9 @@
         DELETE FROM faculty WHERE faculty_id = #{faculty_id}
     </delete>
 
+    <update id="updateFaculty" parameterType="Faculty">
+        UPDATE faculty SET faculty_name = #{faculty_name}, school = #{school}, u_id = #{u_id}
+        WHERE faculty_id = #{faculty_id}
+    </update>
 
 </mapper>
