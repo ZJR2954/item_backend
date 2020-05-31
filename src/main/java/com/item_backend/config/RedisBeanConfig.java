@@ -58,10 +58,13 @@ public class RedisBeanConfig {
         Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        //这一句必须加，不加就没有"com.item_backend.model.pojo.Result" 这多余的一串，
+        // 但是，反序列化的时候就会出现异常，缓存管理器也不知道装成什么形式，所以说还是要加
+        // , 替代下面过时的
         objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,ObjectMapper.DefaultTyping.NON_FINAL);
 
 
-        // objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        // objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL); 过时
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
         // 配置序列化

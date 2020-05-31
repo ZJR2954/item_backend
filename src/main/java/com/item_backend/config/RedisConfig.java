@@ -23,6 +23,7 @@ public class RedisConfig {
      */
     public static final String REDIS_SUBJECT = "SUBJECT_";
     public static final String REDIS_NOTICE = "NOTICE_";//超级管理员的学校id 0 ，notice 后面是学校id
+    public static final String REDIS_NOTICE_SERVICE = "NOTICESERVICE__";//超级管理员的学校id 0 ，notice 后面是学校id
 
 
 }

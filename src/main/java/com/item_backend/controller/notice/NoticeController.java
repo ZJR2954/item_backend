@@ -1,10 +1,8 @@
 package com.item_backend.controller.notice;
 
-import com.github.pagehelper.PageHelper;
-import com.item_backend.config.RedisConfig;
-
 import com.item_backend.model.entity.Notice;
 import com.item_backend.model.entity.PageQueryInfo;
+import com.item_backend.model.pojo.PageResult;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
 import com.item_backend.service.impl.NoticeServiceImp;
@@ -12,10 +10,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -49,24 +47,17 @@ public class NoticeController {
 
     /*自动封装，如果时字符串没有找到，就是空串， 如果是其他数据类型，没有就是null*/
     @Transactional
-   @Cacheable(cacheNames = RedisConfig.REDIS_NOTICE,key ="#SchoolId+''+#pageQueryInfo.pageNum+''+#pageQueryInfo.pageSize" )
     public Result getNoticeList(PageQueryInfo pageQueryInfo, @PathVariable("school_id") Integer SchoolId) {
-        if (SchoolId!=null) {
-            if (SchoolId > 0) {
-                PageHelper.startPage(pageQueryInfo.getPageNum(), pageQueryInfo.getPageSize());
-                List<Notice> managerNoticeList = noticeServiceImp.getManagerNoticeService(SchoolId);
-                System.out.println("managerNoticeList---size-->"+managerNoticeList.size());
-                //超级管理与只保留前三条信息
-                PageHelper.startPage(1, 3);
-                List<Notice> superManagerNoticeList = noticeServiceImp.getSuperManagerNoticeService(0);
-                System.out.println("managerNoticeList---size--->"+superManagerNoticeList.size());
-                Map map=new HashMap();
-                map.put("managerNoticeList",managerNoticeList);
-                map.put("superManagerNoticeList",superManagerNoticeList);
-                return new Result(StatusCode.OK,"获取消息成功",map);
-            }
+        System.out.println("schoolid----->"+SchoolId);
+      Map map =  noticeServiceImp.getNoticeService(pageQueryInfo,SchoolId);
+      PageResult<Notice> managerNoticePageResult= (PageResult<Notice>) map.get("managerNoticeList");
+        String msg="获取消息成功";
+        if (managerNoticePageResult==null){
+            msg="获取用户消息失败,可能的原因是学校不存在";
+            return new Result(StatusCode.ERROR,msg);
         }
-            return null;
+        /*查到学校，但是该学校一条消息都没有的话，就返回一个空的[] managerNoticeList*/
+        return new Result(StatusCode.OK,msg,map);
     }
 
     @ApiOperation("添加消息")
@@ -79,23 +70,14 @@ public class NoticeController {
     })
     @Transactional
     public Result saveNotice(@RequestBody Notice notice) {
-       Integer school_id= noticeServiceImp.getSchoolIdForNoticeUidService(notice);
-       Integer changerrow;
-       String msg="保存了0条消息";
-       if (school_id!=null){
-           if (school_id>0){
-             changerrow=  noticeServiceImp.saveManagerNoticeService(notice);
-           }else {
-             changerrow=  noticeServiceImp.saveSuperManagerNoticeService(notice);
-           }
-           if (changerrow>0){
-               msg="保存了"+changerrow+"行消息";
-           }
-           /*保存数据时需要清空 notice 对应的缓存区*/
-           myCacheManager.getCache(RedisConfig.REDIS_NOTICE).clear();
-           return new Result(StatusCode.OK,msg,null);
-       }
-        return new Result(StatusCode.ERROR,"消息不属于任何学校",null);
+     Integer changeRow= noticeServiceImp.saveNoticeService(notice);
+     String msg="消息保存成功";
+     if (changeRow>0)
+        return new Result(StatusCode.OK,msg);
+     else {
+         msg="消息保存失败，可能的原因是该用户不属于任何学校";
+         return new Result(StatusCode.ERROR,msg);
+     }
     }
 
 
@@ -106,23 +88,13 @@ public class NoticeController {
     })
     @Transactional
     public Result deleteNoticeById(@PathVariable("id") int n_id) {
-            Integer school_id=noticeServiceImp.getSchoolIdFromNidService(n_id);
-             Integer changerrow;
-            String msg="删除了0条消息";
-            if (school_id!=null){
-                if (school_id>0){
-                    changerrow=  noticeServiceImp.deleteManagerNoticeByNoticeIdService(n_id);
-                }else {
-                    changerrow=  noticeServiceImp.deleteSuperManagerNoticeByNoticeIdService(n_id);
-                }
-                if (changerrow>0){
-                    msg="删除了"+changerrow+"行消息";
-                }
-                /*删除数据时需要清空 notice 对应的缓存区*/
-                myCacheManager.getCache(RedisConfig.REDIS_NOTICE).clear();
-                return new Result(StatusCode.OK,msg,null);
-            }
-
-        return new Result(StatusCode.ERROR,"删除失败--消息不属于学校",null);
+       Integer changeRow =  noticeServiceImp.deleteNoticeService(n_id);
+       String msg  = "消息删除成功";
+        if (changeRow>0)
+            return new Result(StatusCode.OK,msg);
+        else {
+            msg="消息删除失败，可能的原因是该用户不属于任何学校";
+            return new Result(StatusCode.ERROR,msg);
+        }
     }
 }

@@ -20,6 +20,10 @@
        select * from notice where u_id in(select u_id from school where school_id = #{id}) order by publish_time desc
     </select>
 
+    <select id="countAllManagerNoticeBySchoolId" parameterType="Integer" resultType="Integer">
+        select count(0) from notice where u_id in(select u_id from school where school_id = #{id})
+    </select>
+
     <insert id="saveManagerNotice" parameterType="com.item_backend.model.entity.Notice">
         insert into notice(n_title,n_content,u_name,u_id) values(#{n_title},#{n_content},#{u_name},#{u_id})
     </insert>

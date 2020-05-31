@@ -20,4 +20,5 @@ public interface NoticeMapper {
      Integer deleteManagerNoticeByNoticeId(Integer id);
      Integer getSchoolIdForNoticeUid(Notice notice);
      Integer getSchoolIdFromNid(Integer n_id);
+    Integer countAllManagerNoticeBySchoolId(Integer school_id);
 }
