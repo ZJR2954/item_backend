@@ -8,6 +8,7 @@ import com.item_backend.config.RedisConfig;
 import com.item_backend.mapper.SchoolMapper;
 import com.item_backend.mapper.UserMapper;
 import com.item_backend.model.dto.SchoolDto;
+import com.item_backend.model.entity.Faculty;
 import com.item_backend.model.entity.School;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.PageResult;
@@ -16,6 +17,7 @@ import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -102,6 +104,22 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public Boolean deleteSchoolBySchoolId(Integer school_id) throws JsonProcessingException {
         if (schoolMapper.deleteSchoolBySchoolId(school_id) <= 0) {
+            return false;
+        }
+        updateSchoolInRedis();
+        return true;
+    }
+
+    /**
+     * 更新院系信息
+     * @param school
+     * @return Boolean
+     * @Author xiao
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateSchool(School school) throws JsonProcessingException {
+        if (schoolMapper.updateSchool(school) <= 0) {
             return false;
         }
         updateSchoolInRedis();

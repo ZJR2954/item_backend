@@ -43,4 +43,9 @@
         DELETE FROM school WHERE school_id = #{school_id}
     </delete>
 
+    <update id="updateSchool" parameterType="School">
+        UPDATE school SET school_name = #{school_name}, u_id = #{u_id}
+        WHERE school_id = #{school_id}
+    </update>
+
 </mapper>

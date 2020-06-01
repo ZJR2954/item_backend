@@ -22,6 +22,10 @@ public interface SchoolService {
     //根据学校id删除学校
     Boolean deleteSchoolBySchoolId(Integer school_id) throws JsonProcessingException;
 
+    //修改学校信息
+    Boolean updateSchool(School school) throws JsonProcessingException;
+
     //更新redis中School信息
     void updateSchoolInRedis() throws JsonProcessingException;
+
 }

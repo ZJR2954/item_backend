@@ -29,4 +29,7 @@ public interface SchoolMapper {
 
     //根据学校id删除学校
     int deleteSchoolBySchoolId(Integer school_id);
+
+    //更新学校学信息
+    int updateSchool(School school);
 }

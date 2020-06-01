@@ -114,7 +114,7 @@ public class FacultyController {
      */
     @ApiOperation(value = "修改院系信息", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
     @PutMapping("/update_faculty")
-    public Result updateMajor(@RequestBody Faculty faculty) throws JsonProcessingException {
+    public Result updateFaculty(@RequestBody Faculty faculty) throws JsonProcessingException {
         // 判断权限
         if (!jwtTokenUtil.checkUserType(request, "校级管理员")) {
             return Result.create(StatusCode.ACCESSERROR, "无权限");
