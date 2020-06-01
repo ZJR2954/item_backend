@@ -39,11 +39,4 @@ public class FacultyAdminServiceImpl implements FacultyAdminService {
         return false;
     }
 
-    // 删除院级管理员
-    public boolean deleteTeacher(Integer userId){
-        if(userMapper.deleteUser(userId)){
-            return true;
-        }
-        return false;
-    }
 }

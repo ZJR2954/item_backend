@@ -2,20 +2,21 @@ package com.item_backend.controller.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
+import com.item_backend.model.pojo.PageResult;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
-import com.item_backend.service.impl.ChapterServiceImpl;
-import com.item_backend.service.impl.QuestionTypeServiceImpl;
-import com.item_backend.service.impl.SubjectServiceImpl;
-import com.item_backend.service.impl.UserServiceImpl;
+import com.item_backend.service.impl.*;
 import com.item_backend.utils.FormatUtil;
 import com.item_backend.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +37,9 @@ public class UserController {
 
     @Autowired
     ChapterServiceImpl chapterService;
+
+    @Autowired
+    SchoolAdminServiceImpl schoolAdminService;
 
     @Autowired
     QuestionTypeServiceImpl questionTypeService;
@@ -133,4 +137,52 @@ public class UserController {
             return Result.create(StatusCode.ERROR, re.getMessage());
         }
     }
+
+    /**
+     * 管理员通过条件查询用户
+     * @param user
+     * @param page
+     * @param showCount
+     * @return
+     */
+    @GetMapping("/search_user/{page}/{showCount}")
+    public Result searchUserByConditions(@RequestBody User user, @PathVariable("page") Integer page,
+                                         @PathVariable("showCount") Integer showCount){
+        List<User> users = userService.searchUserByConditions(user, page, showCount);
+        Integer count = userService.getUserCount(user);
+        if(users.size() == 0){
+            return Result.create(StatusCode.ERROR,"查询结果为空");
+        }
+        PageResult<User> pageResult = new PageResult<>(count, users);
+        return Result.create(StatusCode.OK, "查询成功", pageResult);
+    }
+
+
+    /**
+     * 管理员修改下级用户类型
+     * @param user
+     * @return
+     */
+    @PutMapping("/edit_user_type")
+    public Result editUserType(@RequestBody User user){
+        if (jwtTokenUtil.checkUserType(request,"超级管理员")){
+
+        }
+        if (jwtTokenUtil.checkUserType(request,"校级管理员")){
+            Map<String,String> map = schoolAdminService.editUserType(user);
+            if(map.containsKey("repeat"))
+                return Result.create(StatusCode.OK,map.get("repeat"));
+            if(map.containsKey("OK"))
+                return Result.create(StatusCode.OK,map.get("OK"));
+            else{
+                return Result.create(StatusCode.ERROR,"修改失败!");
+            }
+        }
+        if (jwtTokenUtil.checkUserType(request,"院级管理员")){
+
+        }
+        return Result.create(StatusCode.ACCESSERROR,"无权限");
+    }
+
+
 }

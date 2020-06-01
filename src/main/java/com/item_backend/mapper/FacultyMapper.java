@@ -26,4 +26,7 @@ public interface FacultyMapper {
     // 根据院级管理员id查询学院id
     Integer searchFacultyIdByAdminId(Integer id);
 
+    // 更新院级管理员
+    Boolean updateFacultyAdmin(@Param("adminId")Integer adminId,@Param("facultyName") String facultyName,@Param("schoolName") String schoolName);
+
 }

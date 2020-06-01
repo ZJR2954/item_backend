@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -231,5 +232,15 @@ public class UserServiceImpl implements UserService {
         return map;
     }
 
+    public List<User> searchUserByConditions(User user, Integer page, Integer showCount){
+        List<User> users = userMapper.searchUserByConditions(user,(page-1)*showCount,showCount);
+        System.out.println("test");
+        return users;
+    }
+
+    public int getUserCount(User user){
+        int i = userMapper.getUserCountByConditions(user);
+        return i;
+    }
 
 }

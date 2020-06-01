@@ -18,6 +18,4 @@ public interface FacultyAdminService {
     // 添加教师
     boolean addTeacher(User teacher);
 
-    // 删除教师
-    boolean deleteTeacher(Integer userId);
 }

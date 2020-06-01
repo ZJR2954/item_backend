@@ -11,6 +11,7 @@ import com.item_backend.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,24 +75,5 @@ public class SchoolAdminController {
         return Result.create(StatusCode.OK,"添加成功");
     }
 
-    /**
-     * 校级管理员删除院级管理员
-     * @param userId
-     * @return
-     */
-    @DeleteMapping("/delete_faculty_admin/{userId}")
-    public Result deleteSubject(@PathVariable(value = "userId") Integer userId) {
-        // 判断权限
-        if (!jwtTokenUtil.checkUserType(request,"校级管理员")){
-            return Result.create(StatusCode.ACCESSERROR, "无权限");
-        }
-        // 判断数据是否为空
-        if(!formatUtil.checkObjectNull(userId)){
-            return Result.create(StatusCode.ERROR, "参数错误");
-        }
-        if(!schoolAdminService.deleteFacultyAdmin(userId)){
-            return Result.create(StatusCode.ERROR,"删除失败");
-        }
-        return Result.create(StatusCode.OK,"删除成功");
-    }
+
 }

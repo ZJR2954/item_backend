@@ -85,19 +85,19 @@ public class FacultyAdminController {
      * @param userId
      * @return
      */
-    @DeleteMapping("/delete_teacher/{userId}")
-    public Result deleteSubject(@PathVariable(value = "userId") Integer userId) {
-        // 判断权限
-        if (!jwtTokenUtil.checkUserType(request,"院级管理员")){
-            return Result.create(StatusCode.ACCESSERROR, "无权限");
-        }
-        // 判断数据是否为空
-        if(!formatUtil.checkObjectNull(userId)){
-            return Result.create(StatusCode.ERROR, "参数错误");
-        }
-        if(!facultyAdminService.deleteTeacher(userId)){
-            return Result.create(StatusCode.ERROR,"删除失败");
-        }
-        return Result.create(StatusCode.OK,"删除成功");
-    }
+//    @DeleteMapping("/delete_teacher/{userId}")
+//    public Result deleteSubject(@PathVariable(value = "userId") Integer userId) {
+//        // 判断权限
+//        if (!jwtTokenUtil.checkUserType(request,"院级管理员")){
+//            return Result.create(StatusCode.ACCESSERROR, "无权限");
+//        }
+//        // 判断数据是否为空
+//        if(!formatUtil.checkObjectNull(userId)){
+//            return Result.create(StatusCode.ERROR, "参数错误");
+//        }
+//        if(!facultyAdminService.deleteTeacher(userId)){
+//            return Result.create(StatusCode.ERROR,"删除失败");
+//        }
+//        return Result.create(StatusCode.OK,"删除成功");
+//    }
 }

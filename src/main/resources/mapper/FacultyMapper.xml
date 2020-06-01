@@ -14,8 +14,8 @@
 
     <select id="searchFacultyByFacultyId" parameterType="Integer" resultType="Faculty">
         SELECT *
-        from faculty
-        WHERE faculty_id = #{faculty_id}
+        from user
+        WHERE u_id in (select u_id from faculty where faculty_id = #{faculty_id} and
     </select>
 
     <select id="searchFacultyByUId" parameterType="Integer" resultMap="Faculty">
@@ -35,5 +35,10 @@
         from faculty
         WHERE u_id = #{id}
     </select>
+
+    <update id="updateFacultyAdmin">
+        UPDATE faculty SET u_id = #{adminId}
+        WHERE faculty_name = #{facultyName} and school = #{schoolName}
+    </update>
 
 </mapper>

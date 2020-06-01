@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,4 +27,10 @@ public interface UserService {
 
     // 修改登录密码
     Map changePassword(String token, String oldPassword, String newPassword);
+
+    // 管理员用户通过条件查询用户列表
+    List<User> searchUserByConditions(User user, Integer page, Integer showCount);
+
+    // 查询符合条件的用户数量
+    int getUserCount(User user);
 }
