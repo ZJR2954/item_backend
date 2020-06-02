@@ -10,11 +10,15 @@ import java.util.List;
 @Repository
 public interface NoticeMapper {
 
-     List<Notice> findManagerNotice(Integer schoolId);
-     List<Notice> findSuperManagerNotice(Integer schoolId);
+     List<Notice> getSuperManagerNotice(Integer school_id);
+     List<Notice> getManagerNotice(Integer school_id);
 
-     int saveNotice(Notice notice);
-     int deleteNoticeById(Integer id);
-     int getSchoolIdForNotice(Notice notice);
-     int getSchoolIdFromNid(Integer n_id);
+      Integer saveManagerNotice(Notice notice);
+      Integer saveSuperManagerNotice(Notice notice);
+
+     Integer deleteSuperManagerNoticeByNoticeId(Integer id);
+     Integer deleteManagerNoticeByNoticeId(Integer id);
+     Integer getSchoolIdForNoticeUid(Notice notice);
+     Integer getSchoolIdFromNid(Integer n_id);
+    Integer countAllManagerNoticeBySchoolId(Integer school_id);
 }

@@ -12,23 +12,36 @@
         <result column="u_id" property="u_id"/>
     </resultMap>
 
-    <select id = "findManagerNotice" parameterType="Integer" resultMap="Notice">
-        select * from notice where u_id in(select u_id from school where school_id=#{school_id})
+    <select id = "getManagerNotice" parameterType="Integer" resultMap="Notice">
+        select * from notice where u_id in(select u_id from school where school_id=#{school_id}) order by publish_time desc
     </select>
 
-    <select id = "findSuperManagerNotice" parameterType="java.lang.Integer" resultMap="Notice">
-       select * from notice where u_id in(select u_id from school where school_id = #{id})
+    <select id = "getSuperManagerNotice" parameterType="Integer" resultMap="Notice">
+       select * from notice where u_id in(select u_id from school where school_id = #{id}) order by publish_time desc
     </select>
 
-    <insert id="saveNotice" parameterType="com.item_backend.model.entity.Notice">
+    <select id="countAllManagerNoticeBySchoolId" parameterType="Integer" resultType="Integer">
+        select count(0) from notice where u_id in(select u_id from school where school_id = #{id})
+    </select>
+
+    <insert id="saveManagerNotice" parameterType="com.item_backend.model.entity.Notice">
+        insert into notice(n_title,n_content,u_name,u_id) values(#{n_title},#{n_content},#{u_name},#{u_id})
+    </insert>
+    <insert id="saveSuperManagerNotice" parameterType="com.item_backend.model.entity.Notice">
         insert into notice(n_title,n_content,u_name,u_id) values(#{n_title},#{n_content},#{u_name},#{u_id})
     </insert>
 
-    <delete id="deleteNoticeById" parameterType="Integer">
+
+    <delete id="deleteSuperManagerNoticeByNoticeId" parameterType="Integer">
+       delete from notice where n_id=#{id}
+    </delete>
+    <delete id="deleteManagerNoticeByNoticeId" parameterType="Integer">
        delete from notice where n_id=#{id}
     </delete>
 
-    <select id="getSchoolIdForNotice" parameterType="com.item_backend.model.entity.Notice" resultType="Integer">
+
+
+    <select id="getSchoolIdForNoticeUid" parameterType="com.item_backend.model.entity.Notice" resultType="Integer">
         select school_id from school where u_id=#{u_id};
     </select>
 
