@@ -26,4 +26,6 @@ public class RedisConfig {
      */
     public static final String REDIS_SUBJECT = "SUBJECT_";
 
+    public static final String REDIS_SCHOOL = "SCHOOL_";
+
 }

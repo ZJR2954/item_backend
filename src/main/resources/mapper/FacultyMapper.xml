@@ -12,6 +12,17 @@
         <result property="u_id" column="u_id"/>
     </resultMap>
 
+    <insert id="addFaculty" parameterType="Faculty">
+        INSERT INTO faculty(faculty_name, school, u_id)
+        VALUES(#{faculty_name}, #{school}, #{u_id})
+    </insert>
+
+    <select id="searchFacultyBySchoolName" parameterType="String" resultMap="Faculty">
+        SELECT *
+        from faculty
+        WHERE school = #{school}
+    </select>
+
     <select id="searchFacultyByFacultyId" parameterType="Integer" resultType="Faculty">
         SELECT *
         from faculty
@@ -30,10 +41,13 @@
         WHERE faculty_name = #{facultyName} AND school = #{schoolName}
     </select>
 
-    <select id="searchFacultyIdByAdminId" parameterType="Integer" resultType="Integer">
-        SELECT faculty_id
-        from faculty
-        WHERE u_id = #{id}
-    </select>
+    <delete id="deleteFacultyByFacultyId" parameterType="Integer">
+        DELETE FROM faculty WHERE faculty_id = #{faculty_id}
+    </delete>
+
+    <update id="updateFaculty" parameterType="Faculty">
+        UPDATE faculty SET faculty_name = #{faculty_name}, school = #{school}, u_id = #{u_id}
+        WHERE faculty_id = #{faculty_id}
+    </update>
 
 </mapper>

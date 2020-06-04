@@ -24,4 +24,7 @@ public interface UserMapper {
     //修改用户登录密码
     int changePassword(@Param("u_id") Integer u_id, @Param("newPassword") String newPassword);
 
+    //根据用户id查询用户
+    User searchUserByUId(Integer u_id);
+
 }
