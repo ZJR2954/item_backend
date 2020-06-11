@@ -54,7 +54,7 @@ public class ChangeTeacherInfo {
 
     @ApiOperation("获取老师详细信息")
     @DeleteMapping("/deleteTeacher/{id}")
-    @ApiImplicitParam(name = "id", value = "教师id", defaultValue = "9")
+    @ApiImplicitParam(name = "id", value = "教师id",required = true, defaultValue = "9")
     public Result deleteTeacherById(@PathVariable("id") Integer id ){
       int num=  teacherInfoMapper.deleteTeacherById(id);
       String s ="删除成功";

@@ -3,8 +3,6 @@ package com.item_backend.utils;
 import com.item_backend.config.JwtConfig;
 import com.item_backend.model.dto.UserDto;
 import com.item_backend.model.entity.User;
-import com.item_backend.model.pojo.Result;
-import com.item_backend.model.pojo.StatusCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,7 +39,6 @@ public class JwtTokenUtil implements Serializable {
         }catch (NullPointerException e){
             throw new RuntimeException("无token");
         }
-
         return false;
     }
 
@@ -54,7 +51,6 @@ public class JwtTokenUtil implements Serializable {
     public Integer getUIDFromRequest(HttpServletRequest request) {
         String token = request.getHeader(jwtConfig.getHeader());
         token = token.substring(jwtConfig.getPrefix().length());
-
         return token == null ? null : getUIDFromToken(token);
     }
 
@@ -166,7 +162,6 @@ public class JwtTokenUtil implements Serializable {
         claims.put(CLAIM_KEY_UID, userDto.getUser().getU_id()); // 放入用户名
         claims.put(CLAIM_KEY_CREATED, new Date()); // 放入token生成时间
         claims.put(CLAIM_KEY_ROLES, userDto.getUserType().getU_type_name()); // 放入用户类型名
-
         return generateToken(claims);
     }
 

@@ -37,12 +37,12 @@ public class NoticeController {
     @Autowired
     CacheManager myCacheManager;
 
-    @ApiOperation("获取通知消息")
-    @GetMapping("/getNoticeList/{school_id}")//+ shcollid 地址栏上不用驼峰
+    @ApiOperation(value = "获取通知消息")
+    @GetMapping("/get_notice_list/{school_id}")//+ shcollid 地址栏上不用驼峰
     @ApiImplicitParams({
             @ApiImplicitParam(name = "query", value = "查询关键字", defaultValue = ""),
-            @ApiImplicitParam(name = "pageNum", value = "页号", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页大小", defaultValue = "8")
+            @ApiImplicitParam(name = "pageNum",required = true, value = "页号(非空)", defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize", required = true,value = "每页大小(非空)", defaultValue = "8")
     })
 
     /*自动封装，如果时字符串没有找到，就是空串， 如果是其他数据类型，没有就是null*/
@@ -60,13 +60,13 @@ public class NoticeController {
         return new Result(StatusCode.OK,msg,map);
     }
 
-    @ApiOperation("添加消息")
-    @PostMapping("/saveNotice")
+    @ApiOperation(value = "添加消息")
+    @PostMapping("/save_notice")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "n_title", value = "消息标题", defaultValue = "title"),
-            @ApiImplicitParam(name = "n_content", value = "消息内容", defaultValue = "good good stydy"),
-            @ApiImplicitParam(name = "u_name", value = "提交消息的用户", defaultValue = "hahaha"),
-            @ApiImplicitParam(name = "u_id", value = "用户id", defaultValue = "4")
+            @ApiImplicitParam(name = "n_title",required = true, value = "消息标题", defaultValue = "title"),
+            @ApiImplicitParam(name = "n_content",required = true, value = "消息内容", defaultValue = "good good stydy"),
+            @ApiImplicitParam(name = "u_name",required = true, value = "提交消息的用户", defaultValue = "hahaha"),
+            @ApiImplicitParam(name = "u_id",required = true, value = "用户id", defaultValue = "4")
     })
     @Transactional
     public Result saveNotice(@RequestBody Notice notice) {
@@ -81,10 +81,10 @@ public class NoticeController {
     }
 
 
-    @ApiOperation("通过公告id删除公告")
-    @DeleteMapping("/deleteNotice/{id}")
+    @ApiOperation(value = "通过公告id删除公告")
+    @DeleteMapping("/delete_notice/{id}")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "n_id", value = "消息id", defaultValue = "42"),
+            @ApiImplicitParam(name = "n_id",required = true, value = "消息id", defaultValue = "42"),
     })
     @Transactional
     public Result deleteNoticeById(@PathVariable("id") int n_id) {

@@ -23,7 +23,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @EnableCaching
@@ -67,13 +70,28 @@ public class RedisBeanConfig {
         // objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL); 过时
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
-        // 配置序列化
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+
+        // 对每个缓存空间应用不同的配置,map 的key 就是缓存区的名字
+        Map<String, RedisCacheConfiguration> configMap = new HashMap<>();
+
+
+        // 配置序列化，默认永不清空
+        RedisCacheConfiguration config = RedisCacheConfiguration
+                .defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
+                .disableCachingNullValues()
+                ;
+
+        //对emailControl 这个缓存区 进行180s 清空缓存
+        configMap.put("emailControl", config.entryTtl(Duration.ofSeconds(180L)));
 
         RedisCacheManager cacheManager = RedisCacheManager.builder(lettuceConnectionFactory)
                 .cacheDefaults(config)
+                //对特定的缓存区使用特定的缓存配置
+                // 注意这两句的调用顺序，一定要先调用该方法设置初始化的缓存名，再初始化相关的配置
+                .withInitialCacheConfigurations(configMap)
+//                ------------------
                 .build();
         return cacheManager;
     }

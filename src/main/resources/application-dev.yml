@@ -33,7 +33,12 @@ spring:
         #最小空闲
         min-idle: 0
         #连接超时时间
-
+  mail:
+    host: smtp.qq.com
+    username: 337538196@qq.com
+    password: vbgivahictqjcbca
+    protocol: smtp
+    default-encoding: utf-8
 ### jwt
 jwt:
   ###过期时间
