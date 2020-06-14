@@ -42,4 +42,7 @@ public interface QuestionMapper {
 
     //修改试题状态
     int changeQuestionState(@Param("q_id") Integer q_id, @Param("q_state") Integer q_state);
+
+    //根据试卷id获取试题列表
+    List<Question> searchQuestionsByEId(Integer e_id);
 }

@@ -110,4 +110,10 @@
         WHERE q_id = #{q_id}
     </update>
 
+    <select id="searchQuestionsByEId" parameterType="Integer" resultMap="Question">
+        SELECT * from question
+        WHERE q_id in
+        (SELECT q_id from e_q WHERE e_id = #{e_id})
+    </select>
+
 </mapper>
