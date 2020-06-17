@@ -2,11 +2,16 @@ package com.item_backend.controller.faculty;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.config.JwtConfig;
+import com.item_backend.mapper.FacultyAndUserMapper;
 import com.item_backend.model.dto.FacultyDto;
 import com.item_backend.model.entity.Faculty;
+import com.item_backend.model.entity.FacultyAndUser;
 import com.item_backend.model.pojo.PageResult;
+
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
+import com.item_backend.service.impl.FacultyAndUserServiceImp;
+
 import com.item_backend.service.impl.FacultyServiceImpl;
 import com.item_backend.utils.FormatUtil;
 import com.item_backend.utils.JwtTokenUtil;
@@ -16,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 
 /**
  * @Author xiao
@@ -40,6 +47,18 @@ public class FacultyController {
 
     @Autowired
     HttpServletRequest request;
+
+    @Autowired
+    FacultyAndUserServiceImp facultyAndUserServiceImp;
+
+    @GetMapping("/getFacultyInfo")
+    @ApiOperation("获取院系信息")
+    public PageResult<FacultyAndUser> getFacultyInfo(){
+
+        List<FacultyAndUser> list=   facultyAndUserServiceImp.getFacultyInfo();
+        PageResult<FacultyAndUser> result=new PageResult<FacultyAndUser>(2,list);
+        return result;
+    }
 
     /**
      * 根据学校名查询院系列表
@@ -128,3 +147,4 @@ public class FacultyController {
         return Result.create(StatusCode.OK, "修改成功");
     }
 }
+

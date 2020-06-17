@@ -52,4 +52,17 @@ public class User implements Serializable{
 
     @ApiModelProperty(value = "用户状态", dataType = "Integer")
     private Integer u_state; // 用户状态
+
+     /*
+     u_type
+      {u_type: 1, u_type_name: "超级管理员"},
+      {u_type: 2, u_type_name: "校级管理员"},
+      {u_type: 3, u_type_name: "院级管理员"},
+      {u_type: 4, u_type_name: "命题教师"},
+      {u_type: 5, u_type_name: "审核教师"}
+      {u_type: 6, u_type_name: "普通用户"}
+
+     用户状态
+     “0：注销”、“1：正常”、“2：限制登录”
+    */
 }

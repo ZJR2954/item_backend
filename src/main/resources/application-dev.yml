@@ -18,14 +18,25 @@ spring:
     host: 127.0.0.1
     port: 6379
     timeout: 2000ms
-#    password: 19981020
-    jedis:
-      pool:
-        max-active: 10
-        max-idle: 8
-        min-idle: 2
-        max-wait: 1000ms
+    password:
 
+    lettuce:
+      pool:
+        #最大连接数
+        max-active: 8
+        #最大阻塞等待时间(负数表示没限制)
+        max-wait: -1
+        #最大空闲
+        max-idle: 8
+        #最小空闲
+        min-idle: 0
+        #连接超时时间
+  mail:
+    host: smtp.qq.com
+    username: 337538196@qq.com
+    password: vbgivahictqjcbca
+    protocol: smtp
+    default-encoding: utf-8
 ### jwt
 jwt:
   ###过期时间
@@ -45,8 +56,12 @@ mybatis:
 logging:
   level:
     root: info
-  path: E:/log/item_backend_v1.0
-
 
 server:
-  port: 8080
+  port: 8081
+
+pagehelper:
+  helper-dialect: mysql
+  params: count,countSql
+  reasonable: true
+  support-methods-arguments: true
