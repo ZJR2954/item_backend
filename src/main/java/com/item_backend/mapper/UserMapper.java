@@ -59,7 +59,7 @@ public interface UserMapper {
     //根据用户id查询用户
     User searchUserByUId(Integer u_id);
 
-    //
+    // 通过院级管理员获取用户id
     int getUserIdBySchoolAdmin(String schoolName);
 
 }
