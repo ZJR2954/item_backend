@@ -12,8 +12,8 @@
     </resultMap>
 
     <insert id="addMajor" parameterType="Major">
-        INSERT INTO major(major_id, major_name, faculty_id)
-        VALUES(#{major_id}, #{major_name}, #{faculty_id})
+        INSERT INTO major(major_name, faculty_id)
+        VALUES(#{major_name}, #{faculty_id})
     </insert>
 
     <select id="searchMajorByFacultyId" parameterType="Integer" resultMap="Major">

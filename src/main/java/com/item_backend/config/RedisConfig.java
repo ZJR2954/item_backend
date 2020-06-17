@@ -26,4 +26,9 @@ public class RedisConfig {
      */
     public static final String REDIS_SUBJECT = "SUBJECT_";
 
+    /**
+     * redis中存储学校信息前缀
+     */
+    public static final String REDIS_SCHOOL = "SCHOOL_";
+
 }

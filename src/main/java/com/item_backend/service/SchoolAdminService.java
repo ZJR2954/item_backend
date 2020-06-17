@@ -1,5 +1,6 @@
 package com.item_backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,6 @@ public interface SchoolAdminService {
     boolean addFacultyAdmin(User facultyAdmin);
 
     // 修改校级管理员下级用户类型
-    Map editUserType(User user);
+    Map editUserType(User user) throws JsonProcessingException;
 
 }

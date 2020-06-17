@@ -42,6 +42,12 @@ public class UserController {
     SchoolAdminServiceImpl schoolAdminService;
 
     @Autowired
+    FacultyAdminServiceImpl facultyAdminService;
+
+    @Autowired
+    SuperAdminServiceImpl superAdminService;
+
+    @Autowired
     QuestionTypeServiceImpl questionTypeService;
 
     @Autowired
@@ -164,25 +170,38 @@ public class UserController {
      * @return
      */
     @PutMapping("/edit_user_type")
-    public Result editUserType(@RequestBody User user){
-        if (jwtTokenUtil.checkUserType(request,"超级管理员")){
-
-        }
-        if (jwtTokenUtil.checkUserType(request,"校级管理员")){
-            Map<String,String> map = schoolAdminService.editUserType(user);
-            if(map.containsKey("repeat"))
-                return Result.create(StatusCode.OK,map.get("repeat"));
-            if(map.containsKey("OK"))
-                return Result.create(StatusCode.OK,map.get("OK"));
-            else{
-                return Result.create(StatusCode.ERROR,"修改失败!");
+    public Result editUserType(@RequestBody User user) throws JsonProcessingException {
+        if (jwtTokenUtil.checkUserType(request, "超级管理员")) {
+            Map<String, String> map = superAdminService.editUser(user);
+            if (map.containsKey("repeat"))
+                return Result.create(StatusCode.OK, map.get("repeat"));
+            if (map.containsKey("OK"))
+                return Result.create(StatusCode.OK, map.get("OK"));
+            else {
+                return Result.create(StatusCode.ERROR, "修改失败!");
             }
         }
-        if (jwtTokenUtil.checkUserType(request,"院级管理员")){
-
+        if (jwtTokenUtil.checkUserType(request, "校级管理员")) {
+            Map<String, String> map = schoolAdminService.editUserType(user);
+            if (map.containsKey("repeat"))
+                return Result.create(StatusCode.OK, map.get("repeat"));
+            if (map.containsKey("OK"))
+                return Result.create(StatusCode.OK, map.get("OK"));
+            else {
+                return Result.create(StatusCode.ERROR, "修改失败!");
+            }
         }
-        return Result.create(StatusCode.ACCESSERROR,"无权限");
+        if (jwtTokenUtil.checkUserType(request, "院级管理员")) {
+            Map<String, String> map = facultyAdminService.editUserType(user);
+            if (map.containsKey("repeat"))
+                return Result.create(StatusCode.OK, map.get("repeat"));
+            if (map.containsKey("OK"))
+                return Result.create(StatusCode.OK, map.get("OK"));
+            else {
+                return Result.create(StatusCode.ERROR, "修改失败!");
+            }
+        }
+        return Result.create(StatusCode.ACCESSERROR, "无权限");
     }
-
 
 }

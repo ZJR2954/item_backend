@@ -2,6 +2,7 @@ package com.item_backend.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.item_backend.config.JwtConfig;
 import com.item_backend.config.RedisConfig;

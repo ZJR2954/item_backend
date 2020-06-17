@@ -7,8 +7,11 @@ import com.item_backend.service.FacultyAdminService;
 import com.item_backend.service.SchoolAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:
@@ -26,7 +29,7 @@ public class FacultyAdminServiceImpl implements FacultyAdminService {
         return userMapper.getTeacherCount(facultyId);
     }
 
-    // 查询院级管理员列表
+    // 查询教师列表
     public List<TeacherDto> searchTeacherList(Integer facultyId, Integer schoolId, Integer page, Integer showCount){
         return userMapper.searchUserListByFacultyId(facultyId, schoolId, (page - 1) * showCount,showCount);
     }
@@ -37,6 +40,22 @@ public class FacultyAdminServiceImpl implements FacultyAdminService {
             return true;
         }
         return false;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String,String> editUserType(User user){
+        Map<String,String> map = new HashMap<>();
+        // 判断是否重复修改（即u_type不变，院系不变）
+        User goalUser = userMapper.searchUserBySchoolAndJobNumber(user);
+        if(goalUser.getU_type() == user.getU_type() && goalUser.getU_faculty().equals(user.getU_faculty())){
+            map.put("repeat","目标已经是该角色!");
+            return map;
+        }
+        if(!(userMapper.updateUser(user) <= 0)){
+            map.put("OK","保存成功!");
+            return map;
+        }
+        return null;
     }
 
 }

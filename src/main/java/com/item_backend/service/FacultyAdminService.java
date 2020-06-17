@@ -5,6 +5,7 @@ import com.item_backend.model.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public interface FacultyAdminService {
@@ -18,4 +19,6 @@ public interface FacultyAdminService {
     // 添加教师
     boolean addTeacher(User teacher);
 
+    // 修改教师类型
+    Map editUserType(User user);
 }

@@ -1,5 +1,6 @@
 package com.item_backend.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.mapper.FacultyMapper;
 import com.item_backend.mapper.SchoolMapper;
 import com.item_backend.mapper.UserMapper;
@@ -30,6 +31,9 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     @Autowired
     SchoolMapper schoolMapper;
 
+    @Autowired
+    FacultyServiceImpl facultyService;
+
     // 查询该学校的院系管理员数量
     public int getFacultyAdminCount(Integer schoolId){
         return userMapper.getFacultyAdminCount(schoolId);
@@ -47,12 +51,14 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         if(userMapper.addUser(facultyAdmin)){
             User oldUser  = userMapper.getUserByFacultyAndSchool(facultyAdmin.getU_faculty(), facultyAdmin.getU_school());
             // 查询插入的的用户id
-            int newId = userMapper.getUserIdByIdNumber(facultyAdmin.getId_number());
+            int newId = userMapper.searchUserBySchoolAndJobNumber(facultyAdmin).getU_id();
             //更新对应的faculty列表（后期操作redis）
             if(facultyMapper.updateFacultyAdmin(newId,facultyAdmin.getU_faculty(),facultyAdmin.getU_school())){
-                // 将旧管理员用户类型变更为6——普通用户
-                oldUser.setU_type(6);
-                userMapper.updateUser(oldUser);
+                if (oldUser.getU_type() > 2){
+                    // 将旧管理员用户类型变更为6——普通用户
+                    oldUser.setU_type(6);
+                    userMapper.updateUser(oldUser);
+                }
                 return true;
             }
             return false;
@@ -61,7 +67,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Map editUserType(User user){
+    public Map<String,String> editUserType(User user) throws JsonProcessingException {
         Map<String,String> map = new HashMap<>();
         // 更改前先查询原有用户信息
         User goalUser = userMapper.searchUserBySchoolAndJobNumber(user);
@@ -90,18 +96,20 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
                     if (userMapper.updateUser(user) < 1){
                         return null;
                     }
+                    facultyService.updateFacultyInRedis(user.getU_school());
                     map.put("OK","更改成功!");
                     return map;
                 }
             }
         }
-        // 修改的用户为降级
+        // 修改的用户为降级(只是撤职)
         if(goalUser.getU_type() == 3 && user.getU_type() != 3){
             // 让校长暂代职位
             Integer presidentId = schoolMapper.searchSchoolIdBySchoolName(user.getU_school());
             if(facultyMapper.updateFacultyAdmin(presidentId, user.getU_faculty(),user.getU_school())){
                 // 改变原先院级管理员的类型
                 userMapper.updateUser(user);
+                facultyService.updateFacultyInRedis(user.getU_school());
                 map.put("OK","更改成功!");
                 return map;
             }else {
@@ -109,16 +117,17 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
             }
         }else if(user.getU_type() == 3){ // 如果要升级为院级管理员
 
-            //更新对应的faculty列表（后期操作redis）
             if(facultyMapper.updateFacultyAdmin(user.getU_id(),user.getU_faculty(),user.getU_school())){
                 // 将旧管理员用户类型(除了校长)变更为6——普通用户
                 if (oldUser.getU_type()>2){
                     oldUser.setU_type(6);
                     userMapper.updateUser(oldUser);
                 }
+                user.setOperate_subject(null);
                 if (userMapper.updateUser(user) < 1){
                     return null;
                 }
+                facultyService.updateFacultyInRedis(user.getU_school());
                 map.put("OK","更改成功!");
                 return map;
             }
@@ -126,6 +135,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
         }
         // 不升级为管理员，也不是院级管理员降级则直接更改类型
         if(userMapper.updateUser(user) == 1){
+            facultyService.updateFacultyInRedis(user.getU_school());
             map.put("OK","更改成功!");
             return map;
         }

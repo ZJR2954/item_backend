@@ -33,7 +33,7 @@ public interface UserMapper {
     // 根据条件获取用户数量
     int getUserCountByConditions( User user);
 
-    // 通过身份证号查询用户id
+    // 通过身份证号查询用户id(抛弃)
     int getUserIdByIdNumber(String idNumber);
 
     // 通过院系名和学校查询管理员
@@ -55,4 +55,11 @@ public interface UserMapper {
 
     // 根据条件查询用户列表
     List<User> searchUserByConditions(@Param("user") User user, @Param("start") Integer start, @Param("showCount")Integer showCount);
+
+    //根据用户id查询用户
+    User searchUserByUId(Integer u_id);
+
+    //
+    int getUserIdBySchoolAdmin(String schoolName);
+
 }
