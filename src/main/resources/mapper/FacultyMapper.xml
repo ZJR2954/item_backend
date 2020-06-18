@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.item_backend.mapper.FacultyMapper">
+
+    <resultMap id="Faculty" type="Faculty">
+        <id property="faculty_id" column="faculty_id"/>
+        <result property="faculty_name" column="faculty_name"/>
+        <result property="school" column="school"/>
+        <result property="u_id" column="u_id"/>
+    </resultMap>
+
+    <insert id="addFaculty" parameterType="Faculty">
+        INSERT INTO faculty(faculty_name, school, u_id)
+        VALUES(#{faculty_name}, #{school}, #{u_id})
+    </insert>
+
+    <select id="searchFacultyBySchoolName" parameterType="String" resultMap="Faculty">
+        SELECT *
+        from faculty
+        WHERE school = #{school}
+    </select>
+
+    <select id="searchFacultyByFacultyId" parameterType="Integer" resultType="Faculty">
+        SELECT *
+        from user
+        WHERE u_id in (select u_id from faculty where faculty_id = #{faculty_id} and
+    </select>
+
+    <select id="searchFacultyByUId" parameterType="Integer" resultMap="Faculty">
+        SELECT *
+        from faculty
+        WHERE u_id = #{u_id}
+    </select>
+
+    <select id="searchFacultyIdByFacultyName" resultType="Integer">
+        SELECT faculty_id
+        from faculty
+        WHERE faculty_name = #{facultyName} AND school = #{schoolName}
+    </select>
+
+    <delete id="deleteFacultyByFacultyId" parameterType="Integer">
+        DELETE FROM faculty WHERE faculty_id = #{faculty_id}
+    </delete>
+
+    <update id="updateFaculty" parameterType="Faculty">
+        UPDATE faculty SET faculty_name = #{faculty_name}, school = #{school}, u_id = #{u_id}
+        WHERE faculty_id = #{faculty_id}
+    </update>
+
+    <update id="batchUpdateFacultyAdmin">
+        UPDATE faculty SET u_id = #{newAdminId}
+        WHERE faculty_id in (select faculty_id from faculty where u_id = #{oldAdminId})
+    </update>
+
+</mapper>

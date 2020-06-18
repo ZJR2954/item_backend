@@ -27,4 +27,159 @@
         WHERE job_number = #{job_number} AND u_school = #{u_school}
     </select>
 
+    <update id="updateUser" parameterType="User">
+        UPDATE user SET u_type = #{u_type}, u_school = #{u_school}, u_faculty = #{u_faculty}, job_number = #{job_number},
+         name = #{name}, id_number = #{id_number}, email = #{email}, telephone = #{telephone},
+         operate_subject = #{operate_subject}, u_state = #{u_state}
+        WHERE u_id = #{u_id}
+    </update>
+
+    <select id="searchUserByUIdAndPassword" resultMap="User">
+        SELECT u_id, u_type, u_school, u_faculty, job_number, password, name, id_number,
+        email, telephone, operate_subject, u_state
+        from user
+        WHERE u_id = #{u_id} AND password = #{password}
+    </select>
+
+    <update id="changePassword">
+        UPDATE user SET password = #{newPassword}
+        WHERE u_id = #{u_id}UPDATE user SET password = #{newPassword}
+        WHERE u_id = #{u_id}
+    </update>
+
+    <select id="getFacultyAdminCount" parameterType="Integer" resultType="Integer">
+        select COUNT(1)
+        from  faculty
+        where school in (select school_name from school where school_id = #{id})
+    </select>
+
+
+    <select id="getUserByFacultyAndSchool" parameterType="String" resultMap="User">
+        select *
+        from  user
+        where u_id in (select u_id from faculty where faculty_name = #{facultyName} and school = #{schoolName})
+    </select>
+
+    <select id="getTeacherCount" parameterType="Integer" resultType="Integer">
+        select COUNT(1)
+        from  user
+        where u_faculty in (select faculty_name from faculty where faculty_id = #{id})
+    </select>
+
+
+    <select id="getUserIdByIdNumber" parameterType="String" resultType="int">
+        select u_id
+        from  user
+        where id_number = #{idNumber}
+    </select>
+
+    <select id="searchUserListBySchoolId" parameterType="Integer" resultMap="User">
+        SELECT f.u_id, u.u_type, f.faculty_name as u_faculty, u.job_number, name, u.id_number,
+         u.email, u.telephone, u.operate_subject, u.u_state
+        from faculty f
+            left join user u on f.u_id = u.u_id
+        where f.school in
+            (select school_name from school where school_id = #{school_id})
+        order by f.u_id
+        limit #{start}, #{showCount}
+    </select>
+
+    <select id="searchUserListByFacultyId" parameterType="Integer" resultType="com.item_backend.model.dto.TeacherDto">
+        SELECT u.u_id, u.u_type, u.job_number, u.name, u.id_number,
+         u.email, u.telephone, u.operate_subject, u.u_state, u.u_school, u.u_faculty,
+         s.subject_name, ut.u_type_name
+        from (user u left join subject s on u.operate_subject = s.subject_id)
+            left join user_type ut on u.u_type = ut.u_type
+        where u.u_faculty in
+            (select faculty_name from faculty where faculty_id = #{faculty_id})
+        and u.u_school
+            in(select school_name from school where school_id = #{school_id})
+        and u.u_type
+            in(4,5)
+        order by u.u_id
+        limit #{start}, #{showCount}
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        INSERT INTO user (u_type, u_school, u_faculty, name, job_number,
+        id_number, email, telephone, operate_subject)
+        VALUES (#{u_type}, #{u_school}, #{u_faculty}, #{name}, #{job_number},
+        #{id_number}, #{email}, #{telephone}, #{operate_subject})
+    </insert>
+
+    <delete id="deleteUser" parameterType="Integer">
+        DELETE from user
+        WHERE u_id = #{id}
+    </delete>
+
+    <select id="searchUserByConditions" parameterType="User" resultMap="User">
+        select * from user
+        <where>
+            <choose>
+                <when test="user.u_id != null and user.u_id != ''">
+                    and u_id = #{user.u_id}
+                </when>
+                <when test="user.job_number != null and user.job_number != ''">
+                    and job_number = #{user.job_number}
+                </when>
+                <otherwise>
+                    <if test="user.name != null and user.name != ''">
+                        and name like concat('%',#{user.name},'%')
+                    </if>
+                    <if test="user.u_school != null and user.u_school != ''">
+                        and u_school = #{user.u_school}
+                    </if>
+                    <if test="user.u_type != null and user.u_type != ''">
+                        and u_type = #{user.u_type}
+                    </if>
+                    <if test="user.u_state != null">
+                        and u_state = #{user.u_state}
+                    </if>
+                </otherwise>
+            </choose>
+        </where>
+        order by job_number
+        limit #{start},#{showCount}
+    </select>
+
+    <select id="getUserCountByConditions" parameterType="User" resultType="int">
+        select COUNT(1) from user
+        <where>
+            <choose>
+                <when test="u_id != null and u_id != ''">
+                    and u_id = #{u_id}
+                </when>
+                <when test="job_number != null and job_number != ''">
+                    and job_number = #{job_number}
+                </when>
+                <otherwise>
+                    <if test="name != null and name != ''">
+                        and name like concat('%',#{name},'%')
+                    </if>
+                    <if test="u_school != null and u_school != ''">
+                        and u_school = #{u_school}
+                    </if>
+                    <if test="u_type != null and u_type != ''">
+                        and u_type = #{u_type}
+                    </if>
+                    <if test="u_state != null">
+                        and u_state = #{u_state}
+                    </if>
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="searchUserByUId" parameterType="Integer" resultMap="User">
+        SELECT u_id, u_type, u_school, u_faculty, job_number, name, id_number, email, telephone, operate_subject, u_state
+        from user
+        WHERE u_id = #{u_id}
+    </select>
+
+    <select id="getUserIdBySchoolAdmin" parameterType="String" resultType="int">
+        SELECT u_id
+        from school
+        WHERE school_name = #{schoolName}
+    </select>
+
 </mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.item_backend.mapper.MajorMapper">
+
+    <resultMap id="Major" type="Major">
+        <id property="major_id" column="major_id"/>
+        <result property="major_name" column="major_name"/>
+        <result property="faculty_id" column="faculty_id"/>
+    </resultMap>
+
+    <insert id="addMajor" parameterType="Major">
+        INSERT INTO major(major_name, faculty_id)
+        VALUES(#{major_name}, #{faculty_id})
+    </insert>
+
+    <select id="searchMajorByFacultyId" parameterType="Integer" resultMap="Major">
+        SELECT *
+        from major
+        WHERE faculty_id = #{faculty_id}
+    </select>
+
+    <delete id="deleteMajorByMajorId" parameterType="Integer">
+        DELETE FROM major WHERE major_id = #{major_id}
+    </delete>
+
+    <select id="searchMajorById" parameterType="Integer" resultMap="Major">
+        SELECT major_id, faculty_id, major_name
+        from major
+        WHERE major_id = #{value}
+    </select>
+
+</mapper>
