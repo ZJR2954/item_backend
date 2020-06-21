@@ -50,7 +50,7 @@ public class NoticeController {
     public Result getNoticeList(PageQueryInfo pageQueryInfo, @PathVariable("school_id") Integer SchoolId) {
         System.out.println("schoolid----->"+SchoolId);
       Map map =  noticeServiceImp.getNoticeService(pageQueryInfo,SchoolId);
-      PageResult<Notice> managerNoticePageResult= (PageResult<Notice>) map.get("managerNoticeList");
+      List<Notice> managerNoticePageResult= (List<Notice>)map.get("managerNoticeList");
         String msg="获取消息成功";
         if (managerNoticePageResult==null){
             msg="获取用户消息失败,可能的原因是学校不存在";

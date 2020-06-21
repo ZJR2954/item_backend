@@ -15,4 +15,5 @@ public interface UserTypeMapper {
    Integer deleteUserTypeByUType(@Param("u_type")  Integer u_type);
    List<UserType> getAllUserType(Integer uId);
    Integer updateUserType(UserType userType);
+   List<UserType> selectAllUserType();
 }

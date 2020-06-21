@@ -20,7 +20,7 @@ public interface NoticeService {
    Integer deleteNoticeService(Integer id);
 
     List<Notice> getSuperManagerNoticeService(Integer school_id);
-    PageResult<Notice> getManagerNoticeService(PageQueryInfo pageQueryInfo, Integer school_id);
+    List<Notice> getManagerNoticeService(PageQueryInfo pageQueryInfo, Integer school_id);
     Map getNoticeService(PageQueryInfo pageQueryInfo,Integer school_id);
 
     Integer getSchoolIdForNoticeUidService(Notice notice);

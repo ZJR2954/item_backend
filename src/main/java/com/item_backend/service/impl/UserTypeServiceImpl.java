@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public class UserTypeServiceImpl implements UserTypeService {
+
     @Autowired
     UserTypeMapper userTypeMapper;
 
@@ -79,6 +80,11 @@ public class UserTypeServiceImpl implements UserTypeService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<UserType> selectAllUserType() {
+        return userTypeMapper.selectAllUserType();
     }
 
 }

@@ -10,4 +10,6 @@ public interface UserTypeService {
   Boolean deleteUserType ( Integer u_type);
   List<UserType> getAllUserType(Integer u_id);
   Boolean updateUserType(UserType userType);
+  List<UserType> selectAllUserType();
+
 }

@@ -51,7 +51,7 @@
                 u_type_name=#{u_type_name},
             </if>
 
-            <if test="u_power!=null and u_power!='' ">
+            <if test="u_power!=null">
                 u_power=#{u_power},
             </if>
 
@@ -62,5 +62,9 @@
         where u_type=#{u_type}
 
     </update>
+
+    <select id="selectAllUserType" resultMap="UserType">
+        select * from user_type
+    </select>
 
 </mapper>

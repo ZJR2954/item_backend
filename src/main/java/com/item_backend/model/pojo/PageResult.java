@@ -3,6 +3,7 @@ package com.item_backend.model.pojo;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Data
 @ToString
-public class PageResult<T> {
+public class PageResult<T>{
 
 
     private Integer total; // 数据总数

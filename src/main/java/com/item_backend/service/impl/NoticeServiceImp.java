@@ -106,15 +106,15 @@ public class NoticeServiceImp implements NoticeService {
 
 
     @Override
-    public PageResult<Notice> getManagerNoticeService(PageQueryInfo pageQueryInfo, Integer school_id) {
+    public List<Notice> getManagerNoticeService(PageQueryInfo pageQueryInfo, Integer school_id) {
         System.out.println("-------->ManagerNoticeService");
         if (school_id!=null) {
             if (school_id > 0) {
                 /*mybatis查到学校 但是学校没有发消息，返回list的化 是一个空的list【】,如果是查对象找不到就是空null*/
                 PageHelper.startPage(pageQueryInfo.getPageNum(), pageQueryInfo.getPageSize());
                 List<Notice> managerNoticeList=noticeMapper.getManagerNotice(school_id);
-                PageResult<Notice> pageResult=new PageResult<Notice>(noticeMapper.countAllManagerNoticeBySchoolId(school_id),managerNoticeList);
-                return pageResult;
+               // PageResult<Notice> pageResult=new PageResult<Notice>(noticeMapper.countAllManagerNoticeBySchoolId(school_id),managerNoticeList);
+                return managerNoticeList;
             }
         }
         return null;
@@ -125,7 +125,7 @@ public class NoticeServiceImp implements NoticeService {
     @Cacheable(cacheNames = RedisConfig.REDIS_NOTICE_SERVICE,key ="#school_id+'_'+#pageQueryInfo.pageNum+'_'+#pageQueryInfo.pageSize" )
     public Map getNoticeService(PageQueryInfo pageQueryInfo, Integer school_id) {
         //如果查询不到数据，返回的消息都是为null
-        PageResult<Notice> managerPageResult = getManagerNoticeService(pageQueryInfo,school_id);
+        List<Notice> managerPageResult = getManagerNoticeService(pageQueryInfo,school_id);
         List<Notice> superManagerNoticeList = getSuperManagerNoticeService(0);
         Map map=new HashMap();
         map.put("managerNoticeList",managerPageResult);

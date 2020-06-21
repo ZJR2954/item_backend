@@ -60,11 +60,11 @@ public class UserTypeController {
     }
 
     @ApiOperation(value = "获取所有用户类型",notes = "通过token 拿到用户id 再查，不需要传参数")
-    @GetMapping("/get_all_user_type")
+    @GetMapping("/get_all_user_type/{u_id}")
+    @ApiImplicitParam(name = "u_id",required = true, value = "用户id(非空)")
     //获取超级管理员和校级管理员都可以看到数据， 要判断 只能看到，存redis
-    public Result getAllUserType(HttpServletRequest request){
-        Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-       List<UserType> list= userTypeService.getAllUserType(uId);
+    public Result getAllUserType(HttpServletRequest request,@PathVariable("u_id") Integer u_id){
+       List<UserType> list= userTypeService.getAllUserType(u_id);
        if (list!=null){
            return Result.create(StatusCode.OK,"获取数据成功",list);
        }
@@ -87,6 +87,18 @@ public class UserTypeController {
         }
        return Result.create(StatusCode.ERROR,"更新失败,可能的原因：超级管理员不允许更改。用户类型不存在");
     }
+
+    //获取所有用户的用户类型
+    @GetMapping("/get_all_utype")
+    //获取超级管理员和校级管理员都可以看到数据， 要判断 只能看到，存redis
+    public Result selectAllUserType(){
+        List<UserType> list= userTypeService.selectAllUserType();
+        if (list!=null){
+            return Result.create(StatusCode.OK,"获取数据成功",list);
+        }
+        return Result.create(StatusCode.OK,"获取数据失败");
+    }
+
 }
 
 
