@@ -89,6 +89,7 @@ public class UserTypeController {
     }
 
     //获取所有用户的用户类型
+    @ApiOperation(value = "获取所有用户类型",notes = " 无上下级关系，就是获取所有用户类型")
     @GetMapping("/get_all_utype")
     //获取超级管理员和校级管理员都可以看到数据， 要判断 只能看到，存redis
     public Result selectAllUserType(){
