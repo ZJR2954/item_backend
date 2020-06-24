@@ -42,13 +42,13 @@ public class SuperAdminServiceImpl implements SuperAdminService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean addSchoolAdmin(User schoolAdmin) {
-        if(userMapper.addUser(schoolAdmin)){
-            User oldUser  = userMapper.searchUserByUId(userMapper.getUserIdBySchoolAdmin(schoolAdmin.getU_school()));
+        if (userMapper.addUser(schoolAdmin)) {
+            User oldUser = userMapper.searchUserByUId(userMapper.getUserIdBySchoolAdmin(schoolAdmin.getU_school()));
             // 查询插入的的用户id
             int newId = userMapper.searchUserBySchoolAndJobNumber(schoolAdmin).getU_id();
             //更新对应的school列表（后期操作redis）
-            if(!(schoolMapper.updateSchoolAdmin(newId,schoolAdmin.getU_school()) <= 0)){
-                if (oldUser.getU_type() > 1){
+            if (!(schoolMapper.updateSchoolAdmin(newId, schoolAdmin.getU_school()) <= 0)) {
+                if (oldUser.getU_type() > 1) {
                     // 将旧管理员用户类型变更为6——普通用户
                     oldUser.setU_type(6);
                     userMapper.updateUser(oldUser);
@@ -62,14 +62,14 @@ public class SuperAdminServiceImpl implements SuperAdminService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String,String> editUser(User user) throws JsonProcessingException {
+    public Map<String, String> editUser(User user) throws JsonProcessingException {
         // 目前仅仅写了成功的返回结果，返回情况可能多变，暂时以麻烦的方式返回
         Map<String, String> map = new HashMap();
         // 更改之前根据u_id先查询用户信息
         User user1 = userMapper.searchUserByUId(user.getU_id());
 
         // 如果类型、学校、院系没有改变，则调用普通的用户信息更改业务
-        if (user1.getU_type() == user.getU_type() && user1.getU_school().equals(user.getU_school()) && user1.getU_faculty().equals(user.getU_faculty())) {
+        if (user1.getU_type() == user.getU_type() && user1.getU_school().equals(user.getU_school()) && user1.getU_faculty() == user.getU_faculty()) {
             int flag = userMapper.updateUser(user);
             if (flag > 0) {
                 map.put("OK", "保存成功");
@@ -88,7 +88,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                     if (schoolAdminId == 1) {
                         userMapper.updateUser(user);
                         schoolMapper.updateSchoolAdmin(user.getU_id(), user.getU_school());
-                        facultyMapper.batchUpdateFacultyAdmin(user.getU_id(),1);
+                        facultyMapper.batchUpdateFacultyAdmin(user.getU_id(), 1);
                         facultyService.updateFacultyInRedis(user.getU_school());
                         map.put("OK", "保存成功");
                         return map;
@@ -97,7 +97,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                     u.setU_type(6);
                     userMapper.updateUser(user);
                     schoolMapper.updateSchoolAdmin(user.getU_id(), user.getU_school());
-                    facultyMapper.batchUpdateFacultyAdmin(user.getU_id(),schoolAdminId);
+                    facultyMapper.batchUpdateFacultyAdmin(user.getU_id(), schoolAdminId);
                     facultyService.updateFacultyInRedis(user.getU_school());
                     userMapper.updateUser(u);
 
@@ -113,7 +113,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                 if (user.getU_type() == 6) {
                     userMapper.updateUser(user);
                     schoolMapper.updateSchoolAdmin(1, user.getU_school());
-                    facultyMapper.batchUpdateFacultyAdmin(1,user.getU_id());
+                    facultyMapper.batchUpdateFacultyAdmin(1, user.getU_id());
                     schoolService.updateSchoolInRedis();
                     map.put("OK", "保存成功");
                     return map;
@@ -123,7 +123,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                     userMapper.updateUser(user);
                     facultyMapper.updateFacultyAdmin(user.getU_id(), user.getU_faculty(), user.getU_school());
                     schoolMapper.updateSchoolAdmin(1, user.getU_school());
-                    facultyMapper.batchUpdateFacultyAdmin(1,user.getU_id());
+                    facultyMapper.batchUpdateFacultyAdmin(1, user.getU_id());
                     userMapper.updateUser(facultyAdmin);
                     schoolService.updateSchoolInRedis();
                     map.put("OK", "保存成功");
@@ -132,7 +132,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                     // 降为其他用户（教师）
                     userMapper.updateUser(user);
                     schoolMapper.updateSchoolAdmin(1, user.getU_school());
-                    facultyMapper.batchUpdateFacultyAdmin(1,user.getU_id());
+                    facultyMapper.batchUpdateFacultyAdmin(1, user.getU_id());
                     schoolService.updateSchoolInRedis();
                     map.put("OK", "保存成功");
                     return map;

@@ -2,7 +2,6 @@ package com.item_backend.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.item_backend.config.JwtConfig;
 import com.item_backend.config.RedisConfig;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = new UserDto();
         UserType userType = userTypeMapper.searchUserTypeByUType(user1.getU_type());
         Integer schoolId = schoolMapper.searchSchoolIdBySchoolName(user1.getU_school());
-        Integer facultyId = facultyMapper.searchFacultyIdByFacultyName(user1.getU_faculty(),user1.getU_school());
+        Integer facultyId = facultyMapper.searchFacultyIdByFacultyName(user1.getU_faculty(), user1.getU_school());
         userDto.setUser(user1);
         userDto.setUserType(userType);
         userDto.setSchool_id(schoolId);
@@ -137,11 +137,11 @@ public class UserServiceImpl implements UserService {
      * 删除redis中的key
      */
     public boolean logout() {
-        try{
+        try {
             Integer uId = jwtTokenUtil.getUIDFromRequest(request);
             redisTemplate.delete(JwtConfig.REDIS_TOKEN_KEY_PREFIX + uId);
             return true;
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return false;
         }
     }
@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
      * @param
      * @return Map
      * @Author xiao
-    */
+     */
     @Override
     public Map getProfile(String token) {
         Integer u_id = jwtTokenUtil.getUIDFromToken(token.substring(jwtConfig.getPrefix().length()));
@@ -233,13 +233,20 @@ public class UserServiceImpl implements UserService {
         return map;
     }
 
-    public List<User> searchUserByConditions(User user, Integer page, Integer showCount){
-        List<User> users = userMapper.searchUserByConditions(user,(page-1)*showCount,showCount);
-        System.out.println("test");
-        return users;
+    public List<UserDto> searchUserByConditions(User user, Integer page, Integer showCount) {
+        List<UserDto> userDtoList = new ArrayList<>();
+        List<User> users = userMapper.searchUserByConditions(user, (page - 1) * showCount, showCount);
+        for (int i = 0; i < users.size(); i++) {
+            UserDto userDto = new UserDto();
+            userDto.setUser(users.get(i));
+            userDtoList.add(userDto);
+            UserType userType = userTypeMapper.searchUserTypeByUType(users.get(i).getU_type());
+            userDto.setUserType(userType);
+        }
+        return userDtoList;
     }
 
-    public int getUserCount(User user){
+    public int getUserCount(User user) {
         int i = userMapper.getUserCountByConditions(user);
         return i;
     }

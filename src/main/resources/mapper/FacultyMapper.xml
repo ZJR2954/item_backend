@@ -25,8 +25,8 @@
 
     <select id="searchFacultyByFacultyId" parameterType="Integer" resultType="Faculty">
         SELECT *
-        from user
-        WHERE u_id in (select u_id from faculty where faculty_id = #{faculty_id} and
+        from faculty
+        where faculty_id = #{faculty_id}
     </select>
 
     <select id="searchFacultyByUId" parameterType="Integer" resultMap="Faculty">
@@ -44,6 +44,11 @@
     <delete id="deleteFacultyByFacultyId" parameterType="Integer">
         DELETE FROM faculty WHERE faculty_id = #{faculty_id}
     </delete>
+
+    <update id="updateFacultyAdmin">
+        UPDATE faculty SET u_id = #{adminId}
+        WHERE faculty_name = #{facultyName} AND school = #{schoolName}
+    </update>
 
     <update id="updateFaculty" parameterType="Faculty">
         UPDATE faculty SET faculty_name = #{faculty_name}, school = #{school}, u_id = #{u_id}

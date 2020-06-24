@@ -1,6 +1,7 @@
 package com.item_backend.controller.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.item_backend.model.dto.UserDto;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.PageResult;
 import com.item_backend.model.pojo.Result;
@@ -10,12 +11,10 @@ import com.item_backend.utils.FormatUtil;
 import com.item_backend.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     @Autowired
     UserServiceImpl userService;
 
@@ -151,15 +149,15 @@ public class UserController {
      * @param showCount
      * @return
      */
-    @GetMapping("/search_user/{page}/{showCount}")
+    @PostMapping("/search_user/{page}/{showCount}")
     public Result searchUserByConditions(@RequestBody User user, @PathVariable("page") Integer page,
                                          @PathVariable("showCount") Integer showCount){
-        List<User> users = userService.searchUserByConditions(user, page, showCount);
+        List<UserDto> userDtoList = userService.searchUserByConditions(user, page, showCount);
         Integer count = userService.getUserCount(user);
-        if(users.size() == 0){
+        if(userDtoList.size() == 0){
             return Result.create(StatusCode.ERROR,"查询结果为空");
         }
-        PageResult<User> pageResult = new PageResult<>(count, users);
+        PageResult<UserDto> pageResult = new PageResult<>(count, userDtoList);
         return Result.create(StatusCode.OK, "查询成功", pageResult);
     }
 

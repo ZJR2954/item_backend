@@ -1,6 +1,6 @@
 package com.item_backend.controller.user;
 
-import com.item_backend.model.dto.SubjectDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.PageResult;
 import com.item_backend.model.pojo.Result;
@@ -11,11 +11,9 @@ import com.item_backend.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -64,7 +62,7 @@ public class SchoolAdminController {
      * @return
      */
     @PostMapping("/add_faculty_admin")
-    public Result addSubject(@RequestBody User facultyAdmin) {
+    public Result addSubject(@RequestBody User facultyAdmin) throws JsonProcessingException {
         // 判断权限
         if (!jwtTokenUtil.checkUserType(request,"校级管理员")){
             return Result.create(StatusCode.ACCESSERROR, "无权限");

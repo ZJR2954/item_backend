@@ -18,7 +18,7 @@
     </select>
 
     <select id="getAllUserType" parameterType="int"  resultMap="UserType">
-     select * from user_type where parent_u_type >=(SELECT u_type from user where u_id= #{u_id})
+     select * from user_type where parent_u_type >=(SELECT u_type from user where u_id= #{u_id}) OR u_type = 6
     </select>
 
     <insert id="addUserType" parameterType="com.item_backend.model.entity.UserType">
@@ -51,7 +51,7 @@
                 u_type_name=#{u_type_name},
             </if>
 
-            <if test="u_power!=null and u_power!='' ">
+            <if test="u_power!=null">
                 u_power=#{u_power},
             </if>
 

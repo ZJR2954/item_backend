@@ -65,10 +65,15 @@ public class FacultyServiceImpl implements FacultyService {
         // redis中已经存在，直接获取
         String facultyJSON = redisTemplate.opsForValue().get(RedisConfig.REDIS_FACULTY + schoolName);
         List<FacultyDto> facultyDtoList = JSON.parseObject(facultyJSON, ArrayList.class);
+        if (facultyDtoList == null) {
+            return new PageResult<>(0, new ArrayList<FacultyDto>());
+        }
         int total = facultyDtoList.size();
-        facultyDtoList = facultyDtoList.size() < page * showCount ?
-                facultyDtoList.subList((facultyDtoList.size() / showCount) * showCount, facultyDtoList.size()) :
-                facultyDtoList.subList((page - 1) * showCount, page * showCount);
+        if (page != null && showCount != null) {
+            facultyDtoList = facultyDtoList.size() < page * showCount ?
+                    facultyDtoList.subList((facultyDtoList.size() / showCount) * showCount, facultyDtoList.size()) :
+                    facultyDtoList.subList((page - 1) * showCount, page * showCount);
+        }
         PageResult<FacultyDto> pageResult = new PageResult<>(total, facultyDtoList);
         return pageResult;
     }
@@ -111,6 +116,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     /**
      * 更新院系信息
+     *
      * @param faculty
      * @return Boolean
      * @Author xiao

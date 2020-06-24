@@ -69,10 +69,6 @@ public class SubjectController {
         if (!formatUtil.checkPositive(page, showCount)) {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
-        // 判断是否拥有权限
-        if (!jwtTokenUtil.checkUserType(request,"院级管理员")){
-            return Result.create(StatusCode.ACCESSERROR, "无权限");
-        }
         Integer count = subjectService.getSubjectCount(facultyId);
         List<SubjectDto> subjectDto;
         try {
@@ -82,7 +78,7 @@ public class SubjectController {
             return Result.create(StatusCode.SERVICEERROR, "服务异常");
         }
         if(count == 0 || subjectDto == null){
-            return Result.create(StatusCode.OK, "查询结果为空");
+            return Result.create(StatusCode.ERROR, "查询结果为空");
         }
         // 将结果封装到分页结果类
         PageResult<SubjectDto> pageResult = new PageResult(count, subjectDto);

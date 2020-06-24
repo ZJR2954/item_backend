@@ -1,6 +1,7 @@
 package com.item_backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.item_backend.model.dto.UserDto;
 import com.item_backend.model.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public interface UserService {
     Map changePassword(String token, String oldPassword, String newPassword);
 
     // 管理员用户通过条件查询用户列表
-    List<User> searchUserByConditions(User user, Integer page, Integer showCount);
+    List<UserDto> searchUserByConditions(User user, Integer page, Integer showCount);
 
     // 查询符合条件的用户数量
     int getUserCount(User user);

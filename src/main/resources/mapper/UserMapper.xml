@@ -43,7 +43,6 @@
 
     <update id="changePassword">
         UPDATE user SET password = #{newPassword}
-        WHERE u_id = #{u_id}UPDATE user SET password = #{newPassword}
         WHERE u_id = #{u_id}
     </update>
 
@@ -115,28 +114,25 @@
     <select id="searchUserByConditions" parameterType="User" resultMap="User">
         select * from user
         <where>
-            <choose>
-                <when test="user.u_id != null and user.u_id != ''">
-                    and u_id = #{user.u_id}
-                </when>
-                <when test="user.job_number != null and user.job_number != ''">
-                    and job_number = #{user.job_number}
-                </when>
-                <otherwise>
-                    <if test="user.name != null and user.name != ''">
-                        and name like concat('%',#{user.name},'%')
-                    </if>
-                    <if test="user.u_school != null and user.u_school != ''">
-                        and u_school = #{user.u_school}
-                    </if>
-                    <if test="user.u_type != null and user.u_type != ''">
-                        and u_type = #{user.u_type}
-                    </if>
-                    <if test="user.u_state != null">
-                        and u_state = #{user.u_state}
-                    </if>
-                </otherwise>
-            </choose>
+            1 = 1
+            <if test="user.u_id != null and user.u_id != ''">
+                and u_id = #{user.u_id}
+            </if>
+            <if test="user.job_number != null and user.job_number != ''">
+                and job_number = #{user.job_number}
+            </if>
+            <if test="user.name != null and user.name != ''">
+                and name like concat('%',#{user.name},'%')
+            </if>
+            <if test="user.u_school != null and user.u_school != ''">
+                and u_school = #{user.u_school}
+            </if>
+            <if test="user.u_type != null and user.u_type != ''">
+                and u_type = #{user.u_type}
+            </if>
+            <if test="user.u_state != null">
+                and u_state = #{user.u_state}
+            </if>
         </where>
         order by job_number
         limit #{start},#{showCount}
@@ -145,28 +141,25 @@
     <select id="getUserCountByConditions" parameterType="User" resultType="int">
         select COUNT(1) from user
         <where>
-            <choose>
-                <when test="u_id != null and u_id != ''">
-                    and u_id = #{u_id}
-                </when>
-                <when test="job_number != null and job_number != ''">
-                    and job_number = #{job_number}
-                </when>
-                <otherwise>
-                    <if test="name != null and name != ''">
-                        and name like concat('%',#{name},'%')
-                    </if>
-                    <if test="u_school != null and u_school != ''">
-                        and u_school = #{u_school}
-                    </if>
-                    <if test="u_type != null and u_type != ''">
-                        and u_type = #{u_type}
-                    </if>
-                    <if test="u_state != null">
-                        and u_state = #{u_state}
-                    </if>
-                </otherwise>
-            </choose>
+            1=1
+            <if test="u_id != null and u_id != ''">
+                and u_id = #{u_id}
+            </if>
+            <if test="job_number != null and job_number != ''">
+                and job_number = #{job_number}
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="u_school != null and u_school != ''">
+                and u_school = #{u_school}
+            </if>
+            <if test="u_type != null and u_type != ''">
+                and u_type = #{u_type}
+            </if>
+            <if test="u_state != null">
+                and u_state = #{u_state}
+            </if>
         </where>
     </select>
 

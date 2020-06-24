@@ -2,16 +2,13 @@ package com.item_backend.controller.faculty;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.config.JwtConfig;
-import com.item_backend.mapper.FacultyAndUserMapper;
 import com.item_backend.model.dto.FacultyDto;
 import com.item_backend.model.entity.Faculty;
 import com.item_backend.model.entity.FacultyAndUser;
 import com.item_backend.model.pojo.PageResult;
-
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
 import com.item_backend.service.impl.FacultyAndUserServiceImp;
-
 import com.item_backend.service.impl.FacultyServiceImpl;
 import com.item_backend.utils.FormatUtil;
 import com.item_backend.utils.JwtTokenUtil;
@@ -68,8 +65,8 @@ public class FacultyController {
      * @Author xiao
      */
     @ApiOperation(value = "根据学校名查询院系列表", notes = "Result：状态码+msg+(data)", httpMethod = "GET")
-    @GetMapping("/faculty_list/{school}/{page}/{showCount}")
-    public Result majorList(@PathVariable("school") String school, @PathVariable("page") Integer page, @PathVariable("showCount") Integer showCount) throws JsonProcessingException {
+    @GetMapping({"/faculty_list/{school}/{page}/{showCount}", "/faculty_list/{school}"})
+    public Result majorList(@PathVariable("school") String school, @PathVariable(value = "page", required = false) Integer page, @PathVariable(value = "showCount", required = false) Integer showCount) throws JsonProcessingException {
         if (!formatUtil.checkStringNull(school)) {
             return Result.create(StatusCode.ERROR, "参数错误");
         }

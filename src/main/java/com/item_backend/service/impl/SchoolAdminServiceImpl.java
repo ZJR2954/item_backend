@@ -46,7 +46,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
 
     // 添加院级管理员
     @Transactional(rollbackFor = Exception.class)
-    public boolean addFacultyAdmin(User facultyAdmin){
+    public boolean addFacultyAdmin(User facultyAdmin) throws JsonProcessingException {
 
         if(userMapper.addUser(facultyAdmin)){
             User oldUser  = userMapper.getUserByFacultyAndSchool(facultyAdmin.getU_faculty(), facultyAdmin.getU_school());
@@ -59,6 +59,7 @@ public class SchoolAdminServiceImpl implements SchoolAdminService {
                     oldUser.setU_type(6);
                     userMapper.updateUser(oldUser);
                 }
+                facultyService.updateFacultyInRedis(facultyAdmin.getU_school());
                 return true;
             }
             return false;

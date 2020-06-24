@@ -17,7 +17,7 @@ public interface SchoolAdminService {
     List<User> searchFacultyAdminList(Integer schoolId, Integer page, Integer showCount);
 
     // 添加院级管理员
-    boolean addFacultyAdmin(User facultyAdmin);
+    boolean addFacultyAdmin(User facultyAdmin) throws JsonProcessingException;
 
     // 修改校级管理员下级用户类型
     Map editUserType(User user) throws JsonProcessingException;
