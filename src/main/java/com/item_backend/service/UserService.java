@@ -34,4 +34,10 @@ public interface UserService {
 
     // 查询符合条件的用户数量
     int getUserCount(User user);
+
+    //获取邮箱验证码
+    boolean getVerificationCode(Integer u_id);
+
+    //通过邮箱验证码修改登录密码
+    Map changePasswordByVerificationCode(Integer u_id, String verificationCode, String newPassword);
 }

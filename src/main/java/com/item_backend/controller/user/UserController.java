@@ -59,6 +59,7 @@ public class UserController {
 
     /**
      * 用户登录
+     *
      * @param user
      * @return Result：状态码+msg+(data)
      */
@@ -75,7 +76,7 @@ public class UserController {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            if (map.containsKey("msg")){
+            if (map.containsKey("msg")) {
                 return Result.create(StatusCode.LOGINERROR, map.get("msg").toString());
             }
             return Result.create(StatusCode.OK, "登录成功", map);
@@ -86,12 +87,13 @@ public class UserController {
 
     /**
      * 用户登出
+     *
      * @return Result：状态码+msg
      */
-    @ApiOperation(value = "用户登出",notes = "Result：状态码+msg;删除redis中的key", httpMethod = "GET")
+    @ApiOperation(value = "用户登出", notes = "Result：状态码+msg;删除redis中的key", httpMethod = "GET")
     @GetMapping("/logout")
     public Result logout() {
-        if(userService.logout()) {
+        if (userService.logout()) {
             return Result.create(StatusCode.OK, "退出成功");
         }
         return Result.create(StatusCode.ERROR, "退出失败");
@@ -127,6 +129,13 @@ public class UserController {
         }
     }
 
+    /**
+     * 修改登录密码
+     *
+     * @param request
+     * @param reqMap
+     * @return
+     */
     @ApiOperation(value = "修改登录密码", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
     @PutMapping("/change_password")
     public Result changePassword(HttpServletRequest request, @RequestBody Map reqMap) {
@@ -144,6 +153,7 @@ public class UserController {
 
     /**
      * 管理员通过条件查询用户
+     *
      * @param user
      * @param page
      * @param showCount
@@ -151,11 +161,11 @@ public class UserController {
      */
     @PostMapping("/search_user/{page}/{showCount}")
     public Result searchUserByConditions(@RequestBody User user, @PathVariable("page") Integer page,
-                                         @PathVariable("showCount") Integer showCount){
+                                         @PathVariable("showCount") Integer showCount) {
         List<UserDto> userDtoList = userService.searchUserByConditions(user, page, showCount);
         Integer count = userService.getUserCount(user);
-        if(userDtoList.size() == 0){
-            return Result.create(StatusCode.ERROR,"查询结果为空");
+        if (userDtoList.size() == 0) {
+            return Result.create(StatusCode.ERROR, "查询结果为空");
         }
         PageResult<UserDto> pageResult = new PageResult<>(count, userDtoList);
         return Result.create(StatusCode.OK, "查询成功", pageResult);
@@ -164,6 +174,7 @@ public class UserController {
 
     /**
      * 管理员修改下级用户类型
+     *
      * @param user
      * @return
      */
@@ -202,4 +213,34 @@ public class UserController {
         return Result.create(StatusCode.ACCESSERROR, "无权限");
     }
 
+    /**
+     * 获取邮箱验证码
+     *
+     * @param u_id
+     * @return
+     */
+    @ApiOperation(value = "获取邮箱验证码", notes = "Result：状态码+msg+(data)", httpMethod = "GET")
+    @GetMapping("/get_verification_code/{u_id}")
+    public Result getVerificationCode(@PathVariable("u_id") Integer u_id) {
+        if (userService.getVerificationCode(u_id)) {
+            return Result.create(StatusCode.OK, "验证码已经通过邮件已经发送至绑定邮箱");
+        }
+        return Result.create(StatusCode.ERROR, "获取验证码失败");
+    }
+
+    /**
+     * 通过邮箱验证码修改登录密码
+     * @param u_id
+     * @param reqMap
+     * @return
+     */
+    @ApiOperation(value = "通过邮箱验证码修改登录密码", notes = "Result：状态码+msg+(data)", httpMethod = "PUT")
+    @PutMapping("/change_password_by_verification_code/{u_id}")
+    public Result changePasswordByVerificationCode(@PathVariable("u_id") Integer u_id, @RequestBody Map reqMap) {
+        Map map = userService.changePasswordByVerificationCode(u_id,reqMap.get("verificationCode").toString(), reqMap.get("newPassword").toString());
+        if (map.get("msg") != null) {
+            return Result.create(StatusCode.ACCESSERROR, map.get("msg").toString());
+        }
+        return Result.create(StatusCode.OK, "修改登录密码成功", map);
+    }
 }

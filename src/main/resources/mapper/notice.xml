@@ -13,15 +13,15 @@
     </resultMap>
 
     <select id = "getManagerNotice" parameterType="Integer" resultMap="Notice">
-        select * from notice where u_id in(select u_id from school where school_id=#{school_id}) order by publish_time desc
+        select * from notice where u_id in (select u_id from school where school_id=#{school_id}) or u_id = 1 order by publish_time desc
     </select>
 
-    <select id = "getSuperManagerNotice" parameterType="Integer" resultMap="Notice">
-       select * from notice where u_id in(select u_id from school where school_id = #{id}) order by publish_time desc
+    <select id = "getSuperManagerNotice" resultMap="Notice">
+       select * from notice where u_id = 1 order by publish_time desc
     </select>
 
     <select id="countAllManagerNoticeBySchoolId" parameterType="Integer" resultType="Integer">
-        select count(0) from notice where u_id in(select u_id from school where school_id = #{id})
+        select count(0) from notice where u_id in (select u_id from school where school_id = #{id}) or u_id = 1
     </select>
 
     <insert id="saveManagerNotice" parameterType="com.item_backend.model.entity.Notice">

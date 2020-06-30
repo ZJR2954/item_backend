@@ -18,7 +18,7 @@
     </select>
 
     <select id="getAllUserType" parameterType="int"  resultMap="UserType">
-     select * from user_type where parent_u_type >=(SELECT u_type from user where u_id= #{u_id}) OR u_type = 6
+     select * from user_type where parent_u_type >=(SELECT u_type from user where u_id= #{u_id})
     </select>
 
     <insert id="addUserType" parameterType="com.item_backend.model.entity.UserType">
@@ -62,5 +62,9 @@
         where u_type=#{u_type}
 
     </update>
+
+    <select id="selectAllUserType" resultMap="UserType">
+        select * from user_type
+    </select>
 
 </mapper>

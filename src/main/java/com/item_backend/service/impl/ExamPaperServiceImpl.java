@@ -6,12 +6,15 @@ import com.item_backend.mapper.QuestionMapper;
 import com.item_backend.mapper.UserMapper;
 import com.item_backend.model.dto.ExamPaperDto;
 import com.item_backend.model.entity.ExamPaper;
+import com.item_backend.model.entity.Question;
 import com.item_backend.model.pojo.PageResult;
 import com.item_backend.service.ExamPaperService;
 import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +80,11 @@ public class ExamPaperServiceImpl implements ExamPaperService {
             return map;
         }
         examPaperDto.setExamPaper(examPaper);
-        examPaperDto.setQuestionList(questionMapper.searchQuestionsByEId(e_id));
+        List<Question> questionList = questionMapper.searchQuestionsByEId(e_id);
+        for (int i = 0; i < questionList.size(); i++) {
+            questionList.get(i).setQ_content(HtmlUtils.htmlUnescape(questionList.get(i).getQ_content()));
+        }
+        examPaperDto.setQuestionList(questionList);
         map.put("examPaperDetail", examPaperDto);
         return map;
     }
@@ -90,8 +97,20 @@ public class ExamPaperServiceImpl implements ExamPaperService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean saveExamPaper(String token, ExamPaperDto examPaperDto) {
-        return null;
+        Integer u_id = jwtTokenUtil.getUIDFromToken(token.substring(jwtConfig.getPrefix().length()));
+        if (u_id == null) {
+            return false;
+        }
+        examPaperDto.getExamPaper().setU_id(u_id);
+        if (examPaperMapper.addExamPaper(examPaperDto.getExamPaper()) <= 0) {
+            return false;
+        }
+        for (int i = 0; i < examPaperDto.getQuestionList().size(); i++) {
+            examPaperMapper.addExamQuestion(examPaperDto.getExamPaper().getE_id(), examPaperDto.getQuestionList().get(i).getQ_id());
+        }
+        return true;
     }
 
     /**
@@ -104,8 +123,9 @@ public class ExamPaperServiceImpl implements ExamPaperService {
     public Boolean deleteExamPaper(String token, Integer e_id) {
         Integer u_id = jwtTokenUtil.getUIDFromToken(token.substring(jwtConfig.getPrefix().length()));
         if (u_id == null) {
-            return null;
+            return false;
         }
+        examPaperMapper.deleteExamQuestion(e_id);
         if (examPaperMapper.deleteExamPaperByEIdAndUId(e_id, u_id) <= 0) {
             return false;
         }

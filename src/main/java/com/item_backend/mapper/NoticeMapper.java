@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface NoticeMapper {
 
-    List<Notice> getSuperManagerNotice(Integer school_id);
+    List<Notice> getSuperManagerNotice();
     List<Notice> getManagerNotice(Integer school_id);
 
     Integer saveManagerNotice(Notice notice);

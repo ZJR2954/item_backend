@@ -41,7 +41,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean addSchoolAdmin(User schoolAdmin) {
+    public boolean addSchoolAdmin(User schoolAdmin) throws JsonProcessingException {
         if (userMapper.addUser(schoolAdmin)) {
             User oldUser = userMapper.searchUserByUId(userMapper.getUserIdBySchoolAdmin(schoolAdmin.getU_school()));
             // 查询插入的的用户id
@@ -53,6 +53,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                     oldUser.setU_type(6);
                     userMapper.updateUser(oldUser);
                 }
+                schoolService.updateSchoolInRedis();
                 return true;
             }
             return false;
@@ -69,7 +70,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         User user1 = userMapper.searchUserByUId(user.getU_id());
 
         // 如果类型、学校、院系没有改变，则调用普通的用户信息更改业务
-        if (user1.getU_type() == user.getU_type() && user1.getU_school().equals(user.getU_school()) && user1.getU_faculty() == user.getU_faculty()) {
+        if (user1.getU_type() == user.getU_type() && user1.getU_school().equals(user.getU_school()) && user1.getU_faculty().equals(user.getU_faculty())) {
             int flag = userMapper.updateUser(user);
             if (flag > 0) {
                 map.put("OK", "保存成功");

@@ -1,12 +1,12 @@
 package com.item_backend.controller.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.Result;
 import com.item_backend.model.pojo.StatusCode;
 import com.item_backend.service.impl.SuperAdminServiceImpl;
 import com.item_backend.utils.JwtTokenUtil;
 import io.swagger.annotations.Api;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +40,7 @@ public class SuperAdminController {
      * @return
      */
     @PostMapping("/add_school_admin")
-    public Result addSchoolAdmin(@RequestBody User schoolAdmin) {
+    public Result addSchoolAdmin(@RequestBody User schoolAdmin) throws JsonProcessingException {
         // 判断权限
         if (!jwtTokenUtil.checkUserType(request,"超级管理员")){
             return Result.create(StatusCode.ACCESSERROR, "无权限");

@@ -93,9 +93,9 @@ public class ExamPaperController {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
         if (!examPaperService.saveExamPaper(request.getHeader(jwtConfig.getHeader()), examPaperDto)) {
-            return Result.create(StatusCode.ERROR, "保存失败");
+            return Result.create(StatusCode.ERROR, "组卷失败");
         }
-        return Result.create(StatusCode.OK, "保存成功");
+        return Result.create(StatusCode.OK, "组卷成功");
     }
 
     /**

@@ -16,7 +16,7 @@ import java.util.Map;
 public interface QuestionService {
 
     //条件检索试题
-    PageResult<Question> searchQuestion(Question question, Integer page, Integer showCount);
+    PageResult<Question> searchQuestion(Integer subjectId, Question question, Integer page, Integer showCount);
 
     //获取我的试题
     PageResult<Question> getMyQuestions(String token, Integer page, Integer showCount);
@@ -31,5 +31,8 @@ public interface QuestionService {
     Boolean saveQuestion(String token, Question question);
 
     //审核试题
-    Boolean examineQuestion(String token, Question question);
+    Boolean examineQuestion(Question question);
+
+    //删除试题
+    Boolean deleteQuestion(String token, Integer q_id);
 }

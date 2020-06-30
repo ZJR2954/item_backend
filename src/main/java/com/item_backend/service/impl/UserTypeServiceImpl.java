@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public class UserTypeServiceImpl implements UserTypeService {
+
     @Autowired
     UserTypeMapper userTypeMapper;
 
@@ -29,15 +30,15 @@ public class UserTypeServiceImpl implements UserTypeService {
 
     @Override
     public Boolean addUserType( UserType userType) {
-            if (StringUtils.isEmpty(userType.getU_type_name())){
-                return false;
-            }
+        if (StringUtils.isEmpty(userType.getU_type_name())){
+            return false;
+        }
         System.out.println(userType);
-          Integer change=  userTypeMapper.addUserType(userType);
-          if (change>0){
-              cacheManager.getCache("userType").clear();
-              return true;
-          }
+        Integer change=  userTypeMapper.addUserType(userType);
+        if (change>0){
+            cacheManager.getCache("userType").clear();
+            return true;
+        }
 
         return false;
     }
@@ -65,7 +66,7 @@ public class UserTypeServiceImpl implements UserTypeService {
             return null;
         }
 
-          return  userTypeMapper.getAllUserType( u_id);
+        return  userTypeMapper.getAllUserType( u_id);
     }
 
     @Override
@@ -79,6 +80,11 @@ public class UserTypeServiceImpl implements UserTypeService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<UserType> selectAllUserType() {
+        return userTypeMapper.selectAllUserType();
     }
 
 }

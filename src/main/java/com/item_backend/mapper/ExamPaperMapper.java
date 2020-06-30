@@ -27,4 +27,10 @@ public interface ExamPaperMapper {
 
     //删除试卷
     int deleteExamPaperByEIdAndUId(@Param("e_id") Integer e_id, @Param("u_id") Integer u_id);
+
+    //给试卷插入试题
+    int addExamQuestion(@Param("e_id") Integer e_id, @Param("q_id") Integer q_id);
+
+    //删除试卷试题
+    int deleteExamQuestion(@Param("e_id") Integer e_id);
 }

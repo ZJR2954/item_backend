@@ -2,13 +2,18 @@ package com.item_backend.model.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @ApiModel("notice")
+@Data
+@ToString
 public class Notice implements Serializable {
+
+    private static final long serialVersionUID = -8227337383042338833L;
+
     @ApiModelProperty(value="消息id" ,dataType = "Integer")
     private Integer n_id;
     @ApiModelProperty(value = "消息标题", dataType = "String")
@@ -21,64 +26,4 @@ public class Notice implements Serializable {
     private String u_name;
     @ApiModelProperty(value = "用户id",dataType = "Integer")
     private Integer u_id;
-
-    public Integer getU_id() {
-        return u_id;
-    }
-
-    public void setU_id(Integer u_id) {
-        this.u_id = u_id;
-    }
-
-    @Override
-    public String toString() {
-        return "Notice{" +
-                "n_id=" + n_id +
-                ", n_title='" + n_title + '\'' +
-                ", n_content='" + n_content + '\'' +
-                ", publish_time='" + publish_time + '\'' +
-                ", u_name='" + u_name + '\'' +
-                ", u_id=" + u_id +
-                '}';
-    }
-
-    public Integer getN_id() {
-        return n_id;
-    }
-
-    public void setN_id(Integer n_id) {
-        this.n_id = n_id;
-    }
-
-    public String getN_title() {
-        return n_title;
-    }
-
-    public void setN_title(String n_title) {
-        this.n_title = n_title;
-    }
-
-    public String getN_content() {
-        return n_content;
-    }
-
-    public void setN_content(String n_content) {
-        this.n_content = n_content;
-    }
-
-    public String getPublish_time() {
-        return publish_time;
-    }
-
-    public void setPublish_time(String publish_time) {
-        this.publish_time = publish_time;
-    }
-
-    public String getU_name() {
-        return u_name;
-    }
-
-    public void setU_name(String u_name) {
-        this.u_name = u_name;
-    }
 }

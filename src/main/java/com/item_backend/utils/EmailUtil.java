@@ -16,7 +16,6 @@ public class EmailUtil {
           char c = str.charAt(index); // 获取字符
           s.append(c);
       }
-      System.out.println(s);
       return s.toString();
   }
 }

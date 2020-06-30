@@ -8,7 +8,6 @@ import com.item_backend.config.RedisConfig;
 import com.item_backend.mapper.SchoolMapper;
 import com.item_backend.mapper.UserMapper;
 import com.item_backend.model.dto.SchoolDto;
-import com.item_backend.model.entity.Faculty;
 import com.item_backend.model.entity.School;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.pojo.PageResult;
@@ -112,6 +111,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     /**
      * 更新院系信息
+     *
      * @param school
      * @return Boolean
      * @Author xiao
@@ -134,7 +134,10 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public void updateSchoolInRedis() throws JsonProcessingException {
         List<School> schoolList = schoolMapper.searchSchoolList();
-        if (schoolList.size() <= 0) return;
+        if (schoolList.size() <= 0) {
+            redisTemplate.delete(RedisConfig.REDIS_SCHOOL);
+            return;
+        }
         Iterator<School> iter = schoolList.iterator();
         List<SchoolDto> schoolDtoList = new ArrayList<>();
         while (iter.hasNext()) {

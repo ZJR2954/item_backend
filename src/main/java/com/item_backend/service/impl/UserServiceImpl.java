@@ -13,12 +13,16 @@ import com.item_backend.model.dto.UserDto;
 import com.item_backend.model.entity.User;
 import com.item_backend.model.entity.UserType;
 import com.item_backend.service.UserService;
+import com.item_backend.utils.EmailUtil;
 import com.item_backend.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +65,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtConfig jwtConfig;
 
+    @Autowired
+    EmailUtil emailUtil;
+
+    @Resource
+    JavaMailSender javaMailSender;
+
     /**
      * 用户登录
      *
@@ -86,10 +96,10 @@ public class UserServiceImpl implements UserService {
             return map;
         }
         // 判断用户是否已登录
-        if (redisTemplate.hasKey(JwtConfig.REDIS_TOKEN_KEY_PREFIX + user1.getU_id())) {
-            map.put("msg", "该用户已登录");
-            return map;
-        }
+//        if (redisTemplate.hasKey(JwtConfig.REDIS_TOKEN_KEY_PREFIX + user1.getU_id())) {
+//            map.put("msg", "该用户已登录");
+//            return map;
+//        }
         // 判断用户类型是否正确
         if (!user.getU_type().equals(user1.getU_type())) {
             map.put("msg", "请选择正确的用户类型");
@@ -249,6 +259,53 @@ public class UserServiceImpl implements UserService {
     public int getUserCount(User user) {
         int i = userMapper.getUserCountByConditions(user);
         return i;
+    }
+
+    @Override
+    public boolean getVerificationCode(Integer u_id) {
+        User user = userMapper.searchUserByUId(u_id);
+        if (user != null) {
+            String email = user.getEmail();
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("1714015226@qq.com");
+            message.setTo(email);
+            message.setSubject("试题库账户改密验证码");
+            String checkCode = emailUtil.getCheckCode();
+            message.setText("试题库账户改密验证码为：" + checkCode + "，此验证码10分钟内有效，请不要将验证码泄露给陌生人！");
+            javaMailSender.send(message);
+            // 向redis中存储验证码（设置过期时间10min）
+            redisTemplate.opsForValue().
+                    set(RedisConfig.REDIS_VERIFICATION_CODE + user.getU_id(), checkCode, 600, TimeUnit.SECONDS);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 通过邮箱验证码修改登录密码
+     *
+     * @param u_id
+     * @param verificationCode
+     * @param newPassword
+     * @return
+     */
+    @Override
+    public Map changePasswordByVerificationCode(Integer u_id, String verificationCode, String newPassword) {
+        Map<String, Object> map = new HashMap<>();
+        String verificationCodeJSON = redisTemplate.opsForValue().get(RedisConfig.REDIS_VERIFICATION_CODE + u_id);
+        if (verificationCodeJSON == null) {
+            map.put("msg", "验证码过期，请重新获取");
+            return map;
+        }
+        if (!verificationCodeJSON.equals(verificationCode)) {
+            map.put("msg", "验证码错误，修改登录密码失败");
+            return map;
+        }
+        if (userMapper.changePassword(u_id, newPassword) <= 0) {
+            map.put("msg", "修改密码失败");
+        }
+        redisTemplate.delete(RedisConfig.REDIS_VERIFICATION_CODE + u_id);
+        return map;
     }
 
 }

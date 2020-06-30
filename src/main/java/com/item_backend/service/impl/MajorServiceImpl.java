@@ -95,7 +95,7 @@ public class MajorServiceImpl implements MajorService {
     }
 
     /**
-     * 更新redis中的学科信息
+     * 更新redis中的专业信息
      *
      * @param faculty_id
      * @throws JsonProcessingException
@@ -103,7 +103,10 @@ public class MajorServiceImpl implements MajorService {
     @Override
     public void updateMajorInRedis(Integer faculty_id) throws JsonProcessingException {
         List<Major> majorList = majorMapper.searchMajorByFacultyId(faculty_id);
-        if (majorList.size() <= 0) return;
+        if (majorList.size() <= 0) {
+            redisTemplate.delete(RedisConfig.REDIS_MAJOR + faculty_id);
+            return;
+        }
         Faculty faculty = facultyMapper.searchFacultyByFacultyId(faculty_id);
         Iterator<Major> iter = majorList.iterator();
         List<MajorDto> majorDtoList = new ArrayList<>();

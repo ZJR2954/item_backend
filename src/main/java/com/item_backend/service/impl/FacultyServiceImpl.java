@@ -140,7 +140,10 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public void updateFacultyInRedis(String schoolName) throws JsonProcessingException {
         List<Faculty> facultyList = facultyMapper.searchFacultyBySchoolName(schoolName);
-        if (facultyList.size() <= 0) return;
+        if (facultyList.size() <= 0) {
+            redisTemplate.delete(RedisConfig.REDIS_FACULTY + schoolName);
+            return;
+        }
         Iterator<Faculty> iter = facultyList.iterator();
         List<FacultyDto> facultyDtoList = new ArrayList<>();
         while (iter.hasNext()) {

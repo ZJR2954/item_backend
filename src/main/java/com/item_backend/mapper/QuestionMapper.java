@@ -23,10 +23,10 @@ public interface QuestionMapper {
     Question searchQuestionByQId(Integer q_id);
 
     //根据试题属性查询试题
-    List<Question> searchQuestionsByProperties(@Param("question") Question question, @Param("start") Integer start, @Param("showCount") Integer showCount);
+    List<Question> searchQuestionsByProperties(@Param("subject_id") Integer subjectId, @Param("question") Question question, @Param("start") Integer start, @Param("showCount") Integer showCount);
 
     //根据试题属性查询试题数量
-    int getQuestionCountByProperties(Question question);
+    int getQuestionCountByProperties(@Param("subject_id") Integer subjectId, @Param("question") Question question);
 
     //根据用户id查询试题
     List<Question> searchQuestionsByUId(@Param("u_id") Integer u_id, @Param("start") Integer start, @Param("showCount") Integer showCount);
@@ -41,8 +41,11 @@ public interface QuestionMapper {
     int getPendingQuestionsCountByOperateSubject(Integer operate_subject);
 
     //修改试题状态
-    int changeQuestionState(@Param("q_id") Integer q_id, @Param("q_state") Integer q_state);
+    int changeQuestionStateAndOpinion(@Param("question") Question question);
 
     //根据试卷id获取试题列表
     List<Question> searchQuestionsByEId(Integer e_id);
+
+    //删除试题
+    int deleteQuestion(@Param("u_id") Integer u_id, @Param("q_id") Integer q_id);
 }

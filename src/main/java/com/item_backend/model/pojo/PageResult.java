@@ -17,6 +17,9 @@ public class PageResult<T> {
     private Integer total; // 数据总数
     private List<T> rows; // 数据
 
+    public PageResult() {
+    }
+
     public PageResult(Integer total, List<T> rows) {
         super();
         this.total = total;

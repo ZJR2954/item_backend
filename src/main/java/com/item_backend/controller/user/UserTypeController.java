@@ -33,11 +33,11 @@ public class UserTypeController {
     //f父级类型id]
     public Result addUserType( @RequestBody UserType userType){
         //在service 层判断 用户的token 看看是不是登陆了，并且完成添加功能
-       boolean b= userTypeService.addUserType(userType);
+        boolean b= userTypeService.addUserType(userType);
         System.out.println(b);
-       if (b){
-           return  Result.create(StatusCode.OK,"添加用户类型成功");
-       }
+        if (b){
+            return  Result.create(StatusCode.OK,"添加用户类型成功");
+        }
         return Result.create(StatusCode.ERROR,"添加用户类型失败，原因可能是用户未登陆");
     }
 
@@ -52,10 +52,10 @@ public class UserTypeController {
         if (u_type <= 6){
             return Result.create(StatusCode.ERROR,"基本类型，不允许删除");
         }
-       Boolean b= userTypeService.deleteUserType(u_type);
-       if (b){
-           return Result.create(StatusCode.OK,"删除成功");
-       }
+        Boolean b= userTypeService.deleteUserType(u_type);
+        if (b){
+            return Result.create(StatusCode.OK,"删除成功");
+        }
         return Result.create(StatusCode.ERROR,"删除失败");
     }
 
@@ -64,10 +64,10 @@ public class UserTypeController {
     //获取超级管理员和校级管理员都可以看到数据， 要判断 只能看到，存redis
     public Result getAllUserType(HttpServletRequest request){
         Integer uId = jwtTokenUtil.getUIDFromRequest(request);
-       List<UserType> list= userTypeService.getAllUserType(uId);
-       if (list!=null){
-           return Result.create(StatusCode.OK,"获取数据成功",list);
-       }
+        List<UserType> list= userTypeService.getAllUserType(uId);
+        if (list!=null){
+            return Result.create(StatusCode.OK,"获取数据成功",list);
+        }
         return Result.create(StatusCode.ERROR,"权限不够");
     }
 
@@ -85,22 +85,19 @@ public class UserTypeController {
         if (b){
             return Result.create(StatusCode.OK,"修改成功");
         }
-       return Result.create(StatusCode.ERROR,"更新失败,可能的原因：超级管理员不允许更改。用户类型不存在");
+        return Result.create(StatusCode.ERROR,"更新失败,可能的原因：超级管理员不允许更改。用户类型不存在");
     }
+
+    //获取所有用户的用户类型
+    @ApiOperation(value = "获取所有用户类型",notes = " 无上下级关系，就是获取所有用户类型")
+    @GetMapping("/get_all_utype")
+    //获取超级管理员和校级管理员都可以看到数据， 要判断 只能看到，存redis
+    public Result selectAllUserType(){
+        List<UserType> list= userTypeService.selectAllUserType();
+        if (list!=null){
+            return Result.create(StatusCode.OK,"获取数据成功",list);
+        }
+        return Result.create(StatusCode.OK,"获取数据失败");
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

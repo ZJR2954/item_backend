@@ -36,13 +36,13 @@ public class EmailController {
     CacheManager CacheManager;
 
     @ApiOperation("获取验证码")
-    @GetMapping("/get_check_code")
+    @PostMapping("/get_check_code")
     //提供的学校名和职工id 获取用户所有信息
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "u_school",required = true, value = "用户所属学校（必填）"),
             @ApiImplicitParam(name = "job_number",required = true, value = "职工号（必填）"),
     })
-    public Result getCheckCode(User user){
+    public Result getCheckCode(@RequestBody User user){
         if (StringUtils.isEmpty(user.getU_school())||StringUtils.isEmpty(user.getJob_number())){
             return Result.create(StatusCode.ERROR,"参数没有添加完整");
         }
@@ -51,7 +51,7 @@ public class EmailController {
                String email =  user1.getEmail();
                System.out.println("用户的-俄卖弄----》"+email);
                SimpleMailMessage message = new SimpleMailMessage();
-               message.setFrom("337538196@qq.com");
+               message.setFrom("1714015226@qq.com");
                message.setTo(email);
                message.setSubject("验证码为： ");
                String checkCode = emailUtil.getCheckCode();

@@ -46,7 +46,7 @@
     <select id="searchQuestionsByProperties" resultMap="Question">
         select * from question
         <where>
-            1 = 1
+            q_state = 1
             <if test="question.q_type != null and question.q_type != ''">
                 and q_type = #{question.q_type}
             </if>
@@ -57,24 +57,26 @@
                 and tags like concat('%',#{question.tags},'%')
             </if>
         </where>
+        AND u_id in (SELECT u_id FROM user WHERE operate_subject = #{subject_id})
         order by upload_time DESC
         limit #{start}, #{showCount}
     </select>
 
-    <select id="getQuestionCountByProperties" parameterType="Question" resultType="int">
+    <select id="getQuestionCountByProperties" resultType="int">
         select COUNT(1) from question
         <where>
-            1 = 1
-            <if test="q_type != null and q_type != ''">
-                and q_type = #{q_type}
+            q_state = 1
+            <if test="question.q_type != null and question.q_type != ''">
+                and q_type = #{question.q_type}
             </if>
-            <if test="q_chapter != null and q_chapter != ''">
-                and q_chapter = #{q_chapter}
+            <if test="question.q_chapter != null and question.q_chapter != ''">
+                and q_chapter = #{question.q_chapter}
             </if>
-            <if test="tags!= null and tags != ''">
-                and tags like concat('%',#{tags},'%')
+            <if test="question.tags!= null and question.tags != ''">
+                and tags like concat('%',#{question.tags},'%')
             </if>
         </where>
+        AND u_id in (SELECT u_id FROM user WHERE operate_subject = #{subject_id})
     </select>
 
     <select id="searchQuestionsByUId" resultMap="Question">
@@ -105,15 +107,19 @@
         (select u_id from user where operate_subject = #{operate_subject})
     </select>
 
-    <update id="changeQuestionState">
-        UPDATE question SET q_state = #{q_state}
-        WHERE q_id = #{q_id}
+    <update id="changeQuestionStateAndOpinion">
+        UPDATE question SET q_state = #{question.q_state}, opinion = #{question.opinion}
+        WHERE q_id = #{question.q_id}
     </update>
 
     <select id="searchQuestionsByEId" parameterType="Integer" resultMap="Question">
         SELECT * from question
         WHERE q_id in
         (SELECT q_id from e_q WHERE e_id = #{e_id})
+        ORDER BY q_type
     </select>
 
+    <delete id="deleteQuestion">
+        DELETE FROM question WHERE q_id = #{q_id} AND u_id = #{u_id}
+    </delete>
 </mapper>

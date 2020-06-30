@@ -36,6 +36,9 @@ public class QuestionServiceImpl implements QuestionService {
     private UserMapper userMapper;
 
     @Autowired
+    private SubjectServiceImpl subjectService;
+
+    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
@@ -53,14 +56,14 @@ public class QuestionServiceImpl implements QuestionService {
      * @return
      */
     @Override
-    public PageResult<Question> searchQuestion(Question question, Integer page, Integer showCount) {
+    public PageResult<Question> searchQuestion(Integer subjectId, Question question, Integer page, Integer showCount) {
         List<Question> questionList = new ArrayList<>();
         if (question.getQ_id() == null) {
-            questionList = questionMapper.searchQuestionsByProperties(question, (page - 1) * showCount, showCount);
+            questionList = questionMapper.searchQuestionsByProperties(subjectId, question, (page - 1) * showCount, showCount);
             for (int i = 0; i < questionList.size(); i++) {
                 questionList.get(i).setQ_content(HtmlUtils.htmlUnescape(questionList.get(i).getQ_content()));
             }
-            return new PageResult<>(questionMapper.getQuestionCountByProperties(question), questionList);
+            return new PageResult<>(questionMapper.getQuestionCountByProperties(subjectId, question), questionList);
         } else {
             Question q = questionMapper.searchQuestionByQId(question.getQ_id());
             if (q == null) {
@@ -129,6 +132,7 @@ public class QuestionServiceImpl implements QuestionService {
         Map<String, Object> map = new HashMap<>();
         QuestionDto questionDto = new QuestionDto();
         Question question = questionMapper.searchQuestionByQId(q_id);
+        question.setQ_content(HtmlUtils.htmlUnescape(question.getQ_content()));
         if (question == null) {
             map.put("msg", "查询结果为空");
             return map;
@@ -176,8 +180,28 @@ public class QuestionServiceImpl implements QuestionService {
      * @return
      */
     @Override
-    public Boolean examineQuestion(String token, Question question) {
-        if (questionMapper.changeQuestionState(question.getQ_id(), question.getQ_state()) <= 0) {
+    public Boolean examineQuestion(Question question) {
+        if (questionMapper.changeQuestionStateAndOpinion(question) <= 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 删除试题
+     *
+     * @param token
+     * @param q_id
+     * @return
+     */
+    @Override
+    public Boolean deleteQuestion(String token, Integer q_id) {
+        Integer u_id = jwtTokenUtil.getUIDFromToken(token.substring(jwtConfig.getPrefix().length()));
+        // 判断u_id的值
+        if (u_id == null) {
+            return false;
+        }
+        if (questionMapper.deleteQuestion(u_id, q_id) <= 0) {
             return false;
         }
         return true;

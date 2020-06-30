@@ -34,4 +34,9 @@ public class RedisConfig {
      */
     public static final String REDIS_SCHOOL = "SCHOOL_";
 
+    /**
+     * redis中存储验证码信息前缀
+     */
+    public static final String REDIS_VERIFICATION_CODE = "VERIFICATION_CODE_";
+
 }

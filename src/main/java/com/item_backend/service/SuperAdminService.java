@@ -9,7 +9,7 @@ import java.util.Map;
 @Service
 public interface SuperAdminService {
 
-    boolean addSchoolAdmin(User schoolAdmin);
+    boolean addSchoolAdmin(User schoolAdmin) throws JsonProcessingException;
 
     Map editUser(User user) throws JsonProcessingException;
 }

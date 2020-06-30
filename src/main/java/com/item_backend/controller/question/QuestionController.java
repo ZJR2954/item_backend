@@ -49,12 +49,12 @@ public class QuestionController {
      * @Author xiao
      */
     @ApiOperation(value = "条件检索试题", notes = "Result：状态码+msg+(data)", httpMethod = "POST")
-    @PostMapping({"/search_question/{page}/{showCount}"})
-    public Result questionList(@RequestBody Question question, @PathVariable("page") Integer page, @PathVariable("showCount") Integer showCount) {
+    @PostMapping({"/search_question/{subjectId}/{page}/{showCount}"})
+    public Result questionList(@RequestBody Question question, @PathVariable("subjectId") Integer subjectId, @PathVariable("page") Integer page, @PathVariable("showCount") Integer showCount) {
         if (!formatUtil.checkObjectNull(question)) {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
-        PageResult<Question> pageResult = questionService.searchQuestion(question, page, showCount);
+        PageResult<Question> pageResult = questionService.searchQuestion(subjectId, question, page, showCount);
         return Result.create(StatusCode.OK, "查询成功", pageResult);
     }
 
@@ -140,7 +140,7 @@ public class QuestionController {
      * @Author xiao
      */
     @ApiOperation(value = "审核试题", notes = "Result：状态码+msg+(data)", httpMethod = "POST")
-    @PostMapping("/examine_question")
+    @PutMapping("/examine_question")
     public Result examineQuestion(@RequestBody Question question) {
         // 判断权限
         if (!jwtTokenUtil.checkUserType(request, "审核教师")) {
@@ -149,10 +149,33 @@ public class QuestionController {
         if (!formatUtil.checkObjectNull(question)) {
             return Result.create(StatusCode.ERROR, "参数错误");
         }
-        if (!questionService.examineQuestion(request.getHeader(jwtConfig.getHeader()), question)) {
+        if (!questionService.examineQuestion(question)) {
             return Result.create(StatusCode.ERROR, "审核失败");
         }
         return Result.create(StatusCode.OK, "审核成功");
+    }
+
+    /**
+     * 删除试题
+     *
+     * @param
+     * @return Result：状态码+msg+(data)
+     * @Author xiao
+     */
+    @ApiOperation(value = "删除试题", notes = "Result：状态码+msg+(data)", httpMethod = "POST")
+    @DeleteMapping("/delete_question/{q_id}")
+    public Result deleteQuestion(@PathVariable("q_id") Integer q_id) {
+        // 判断权限
+        if (!jwtTokenUtil.checkUserType(request, "命题教师")) {
+            return Result.create(StatusCode.ACCESSERROR, "无权限");
+        }
+        if (!formatUtil.checkObjectNull(q_id)) {
+            return Result.create(StatusCode.ERROR, "参数错误");
+        }
+        if (!questionService.deleteQuestion(request.getHeader(jwtConfig.getHeader()), q_id)) {
+            return Result.create(StatusCode.ERROR, "删除失败");
+        }
+        return Result.create(StatusCode.OK, "删除成功");
     }
 
 }

@@ -15,9 +15,9 @@
         <result property="u_id" column="u_id"/>
     </resultMap>
 
-    <insert id="addExamPaper" parameterType="ExamPaper">
-        INSERT INTO exam_paper(e_title, e_subject, finish_type, finish_time, distinction, u_id)
-        VALUES(#{e_title}, #{e_subject}, #{finish_type}, #{finish_time}, #{distinction}, #{u_id})
+    <insert id="addExamPaper" parameterType="ExamPaper" useGeneratedKeys="true" keyProperty="e_id">
+        INSERT INTO exam_paper(e_title, e_subject, finish_type, distinction, u_id)
+        VALUES(#{e_title}, #{e_subject}, #{finish_type}, #{distinction}, #{u_id})
     </insert>
 
     <select id="searchExamPaperByEId" parameterType="Integer" resultMap="ExamPaper">
@@ -39,6 +39,14 @@
 
     <delete id="deleteExamPaperByEIdAndUId">
         DELETE FROM exam_paper WHERE e_id = #{e_id} AND u_id = #{u_id}
+    </delete>
+
+    <insert id="addExamQuestion">
+        INSERT INTO e_q(e_id, q_id) VALUES (#{e_id}, #{q_id})
+    </insert>
+
+    <delete id="deleteExamQuestion">
+        DELETE FROM e_q WHERE e_id = #{e_id}
     </delete>
 
 </mapper>
