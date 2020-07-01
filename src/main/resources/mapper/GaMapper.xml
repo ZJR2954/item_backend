@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.item_backend.exam.GaMapper">
+
+    <select id="getOneTypeQuestions" parameterType="java.util.Map"
+            resultType="com.item_backend.exam.Questions">
+
+        select * from question where q_type = "${qt}" and q_subject="${q_subject}"
+        <if test="kpSet.size()>0">
+            and
+            knowledge in
+            <foreach collection="kpSet" item="item" open="(" close=")" separator=",">
+                "${item}"
+            </foreach>
+        </if>
+    </select>
+
+
+
+</mapper>
