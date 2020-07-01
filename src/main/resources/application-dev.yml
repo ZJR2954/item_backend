@@ -65,3 +65,10 @@ pagehelper:
   params: count,countSql
   reasonable: true
   support-methods-arguments: true
+
+#七牛的配置
+qiniu:
+    accessKey: PiZfyaRbuJE7moSwfNVrIoj1VLRBsQivxXpO91Pf
+    secretKey: nk_xC4js0f11jAOigSzpAMh28_efHMFE8kaW0hyD
+    bucketName: itembank2954
+    fileDomain: http://qcrp47k4o.bkt.clouddn.com #文件访问域名前缀

@@ -1,11 +1,12 @@
 package com.item_backend.controller;
 
-import com.baidu.ueditor.ActionEnter;
 import com.item_backend.model.dto.UEditorFile;
 import com.item_backend.utils.UEditorUploadUtil;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,9 @@ public class UEditorController {
     @Autowired
     private UEditorUploadUtil uEditorUploadUtil;
 
+    @Value("classpath:ueditor/config.json")
+    private Resource config;
+
     //用于给前端UEditor返回后端相应配置文件
     @ResponseBody
     @RequestMapping("/ueditor")
@@ -31,9 +35,9 @@ public class UEditorController {
         if (action.equals("config")) {
             request.setCharacterEncoding("utf-8");
             response.setHeader("Content-Type", "text/html");
-            String uEditorConfigFilePath = ClassUtils.getDefaultClassLoader().getResource("").getPath() + "ueditor";
             PrintWriter filterWriter = response.getWriter();
-            filterWriter.write(new ActionEnter(request, uEditorConfigFilePath).exec());
+            String areaData = IOUtils.toString(config.getInputStream(), "UTF-8");
+            filterWriter.write(areaData);
             filterWriter.flush();
             filterWriter.close();
         } else if (action.equals("uploadimage")) {
