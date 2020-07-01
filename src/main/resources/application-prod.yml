@@ -55,7 +55,7 @@ mybatis:
 
 logging:
   level:
-    root: info
+    root: error
   path: /home/log/item_backend_v1.0
 
 server:
